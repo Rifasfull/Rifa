@@ -100,38 +100,29 @@
     </p>
   </div>
 
-  <script>
-    const numeros = JSON.parse(localStorage.getItem("numeros"));
-    const cantidad = localStorage.getItem("cantidad");
-    const total = localStorage.getItem("total");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    const resumen = document.getElementById("resumen");
+  const numeros = JSON.parse(localStorage.getItem("numeros"));
+  const cantidad = localStorage.getItem("cantidad");
+  const total = localStorage.getItem("total");
 
-    if (!numeros || numeros.length === 0) {
-      resumen.innerHTML = "❌ No hay datos de compra";
-    } else {
-      resumen.innerHTML = `
-        Números seleccionados:<br><br>
-        ${numeros.join(", ")}<br><br>
-        Cantidad: ${cantidad}<br>
-        Total a pagar: $${Number(total).toLocaleString()}
-      `;
-    }
+  const resumen = document.getElementById("resumen");
 
-    function pagarNequi() {
-      const nombre = document.getElementById("nombre").value.trim();
-      const correo = document.getElementById("correo").value.trim();
-      const telefono = document.getElementById("telefono").value.trim();
-      const ciudad = document.getElementById("ciudad").value.trim();
+  if (!numeros || numeros.length === 0) {
+    resumen.innerHTML = "❌ No hay datos de compra";
+    return;
+  }
 
-      if (!nombre || !correo || !telefono || !ciudad) {
-        alert("Por favor completa todos los datos");
-        return;
-      }
+  resumen.innerHTML = `
+    Números seleccionados:<br><br>
+    ${numeros.join(", ")}<br><br>
+    Cantidad: ${cantidad}<br>
+    Total a pagar: $${Number(total).toLocaleString()}
+  `;
 
-      alert("Datos guardados. Pago Nequi pendiente.");
-    }
-  </script>
+});
+</script>
 
 </body>
 </html>
