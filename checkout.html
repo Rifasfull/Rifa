@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finalizar compra</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .resumen {
+      background: #f7f7f7;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .nequi {
+      background: #00c853;
+      color: white;
+    }
+
+    .disabled {
+      background: #ddd;
+      color: #777;
+      cursor: not-allowed;
+    }
+
+    .nota {
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>💳 Finalizar compra</h1>
+
+    <div id="resumen" class="resumen">
+      Cargando datos de compra...
+    </div>
+
+    <input type="text" id="nombre" placeholder="Nombre completo" required>
+    <input type="email" id="correo" placeholder="Correo electrónico" required>
+    <input type="tel" id="telefono" placeholder="Número de teléfono" required>
+    <input type="text" id="ciudad" placeholder="Ciudad" required>
+
+    <button class="nequi" onclick="pagarNequi()">Pagar con Nequi</button>
+
+    <button class="disabled">Daviplata (próximamente)</button>
+    <button class="disabled">Bancolombia / BPay (próximamente)</button>
+
+    <p class="nota">
+      Tus números quedarán reservados hasta que confirmemos el pago.
+    </p>
+  </div>
+
+  <script>
+    // Leer datos guardados desde index o seleccionar
+    const compra = JSON.parse(localStorage.getItem("compraRifa"));
+
+    const resumen = document.getElementById("resumen");
+
+    if (!compra) {
+      resumen.innerHTML = "❌ No hay datos de compra";
+    } else {
+      resumen.innerHTML = `
+        Números: <br>
+         <br><br>
+        Total a pagar: <br>
+        $
+      `;
+    }
+
+    function pagarNequi() {
+      if (!compra) {
+        alert("No hay datos de compra");
+        return;
+      }
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const correo = document.getElementById("correo").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+      const ciudad = document.getElementById("ciudad").value.trim();
+
+      if (!nombre || !correo || !telefono || !ciudad) {
+        alert("Por favor completa todos los datos");
+        return;
+      }
+
+      // Guardar datos del cliente
+      compra.cliente = {
+        nombre,
+        correo,
+        telefono,
+        ciudad,
+        fecha: new Date().toISOString()
+      };
+
+      localStorage.setItem("compraRifa", JSON.stringify(compra));
+
+      // Link de pago Nequi (temporal / manual)
+      const monto = compra.total;
+      const telefonoNequi = "3113959486";
+
+      const linkNequi = `https://api.whatsapp.com/send?phone=57&text=Hola,%20quiero%20pagar%20$%20por%20la%20rifa.%20Mi%20nombre%20es%20`;
+
+      window.location.href = linkNequi;
+    }
+  </script>
+
+</body>
+</html>
