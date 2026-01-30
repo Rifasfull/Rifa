@@ -85,10 +85,10 @@
       Cargando datos de compra...
     </div>
 
-    <input type="text" id="nombre" placeholder="Nombre completo" required>
-    <input type="email" id="correo" placeholder="Correo electrónico" required>
-    <input type="tel" id="telefono" placeholder="Número de teléfono" required>
-    <input type="text" id="ciudad" placeholder="Ciudad" required>
+    <input type="text" id="nombre" placeholder="Nombre completo">
+    <input type="email" id="correo" placeholder="Correo electrónico">
+    <input type="tel" id="telefono" placeholder="Número de teléfono">
+    <input type="text" id="ciudad" placeholder="Ciudad">
 
     <button class="nequi" onclick="pagarNequi()">Pagar con Nequi</button>
 
@@ -101,28 +101,24 @@
   </div>
 
   <script>
-    // Leer datos guardados desde index o seleccionar
-    const compra = JSON.parse(localStorage.getItem("compraRifa"));
+    const numeros = JSON.parse(localStorage.getItem("numeros"));
+    const cantidad = localStorage.getItem("cantidad");
+    const total = localStorage.getItem("total");
 
     const resumen = document.getElementById("resumen");
 
-    if (!compra) {
+    if (!numeros || numeros.length === 0) {
       resumen.innerHTML = "❌ No hay datos de compra";
     } else {
       resumen.innerHTML = `
-        Números: <br>
-         <br><br>
-        Total a pagar: <br>
-        $
+        Números seleccionados:<br><br>
+        ${numeros.join(", ")}<br><br>
+        Cantidad: ${cantidad}<br>
+        Total a pagar: $${Number(total).toLocaleString()}
       `;
     }
 
     function pagarNequi() {
-      if (!compra) {
-        alert("No hay datos de compra");
-        return;
-      }
-
       const nombre = document.getElementById("nombre").value.trim();
       const correo = document.getElementById("correo").value.trim();
       const telefono = document.getElementById("telefono").value.trim();
@@ -133,45 +129,8 @@
         return;
       }
 
-      // Guardar datos del cliente
-      compra.cliente = {
-        nombre,
-        correo,
-        telefono,
-        ciudad,
-        fecha: new Date().toISOString()
-      };
-
-      localStorage.setItem("compraRifa", JSON.stringify(compra));
-
-      // Link de pago Nequi (temporal / manual)
-      const monto = compra.total;
-      const telefonoNequi = "3113959486";
-
-      const linkNequi = `https://api.whatsapp.com/send?phone=57&text=Hola,%20quiero%20pagar%20$%20por%20la%20rifa.%20Mi%20nombre%20es%20`;
-
-      window.location.href = linkNequi;
+      alert("Datos guardados. Pago Nequi pendiente.");
     }
-    <script>
-const numeros = JSON.parse(localStorage.getItem("numeros"));
-const cantidad = localStorage.getItem("cantidad");
-const total = localStorage.getItem("total");
-
-const contenedor = document.getElementById("resumen-compra");
-const alerta = document.getElementById("sin-datos");
-
-if (!numeros || numeros.length === 0) {
-  alerta.style.display = "block";
-} else {
-  alerta.style.display = "none";
-
-  contenedor.innerHTML = `
-    <p><strong>Números seleccionados:</strong></p>
-    <p>${numeros.join(", ")}</p>
-    <p><strong>Cantidad:</strong> ${cantidad}</p>
-    <p><strong>Total a pagar:</strong> $${Number(total).toLocaleString()}</p>
-  `;
-}
   </script>
 
 </body>
