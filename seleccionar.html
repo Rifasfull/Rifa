@@ -8,88 +8,18 @@
 <style>
 body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
 h1{text-align:center}
-
-.card{
-  background:white;
-  padding:16px;
-  border-radius:12px;
-  margin-bottom:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08)
-}
-
-input{
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  font-size:15px
-}
-
-.grid-wrapper{
-  max-height:360px;
-  overflow-y:auto;
-  border:1px solid #ddd;
-  border-radius:8px;
-  padding:8px
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(60px,1fr));
-  gap:8px
-}
-
-.num{
-  padding:10px;
-  text-align:center;
-  border-radius:6px;
-  background:#e0e0e0;
-  cursor:pointer;
-  font-size:14px
-}
-
-.num.selected{
-  background:#4CAF50;
-  color:white
-}
-
-.num.blocked{
-  background:#c62828;
-  color:white;
-  cursor:not-allowed
-}
-
-.fixed-actions{
-  position:sticky;
-  top:0;
-  background:white;
-  padding-bottom:10px;
-  z-index:10
-}
-
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
-  cursor:pointer
-}
-
-button.primary{
-  background:#4CAF50;
-  color:white
-}
-
-button.secondary{
-  background:#2196F3;
-  color:white
-}
-
-button.disabled{
-  background:#aaa;
-  cursor:not-allowed
-}
+.card{background:white;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+input{width:100%;padding:10px;margin-bottom:10px;font-size:15px}
+.grid-wrapper{max-height:360px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:8px}
+.num{padding:10px;text-align:center;border-radius:6px;background:#e0e0e0;cursor:pointer;font-size:14px}
+.num.selected{background:#4CAF50;color:white}
+.num.blocked{background:#c62828;color:white;cursor:not-allowed}
+.fixed-actions{position:sticky;top:0;background:white;padding-bottom:10px;z-index:10}
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;font-size:16px;cursor:pointer}
+button.primary{background:#4CAF50;color:white}
+button.secondary{background:#2196F3;color:white}
+button.disabled{background:#aaa;cursor:not-allowed}
 </style>
 </head>
 
@@ -116,6 +46,7 @@ button.disabled{
 
 <script>
 const TOTAL = 10000;
+const PRECIO_POR_NUMERO = 5000;
 const cantidad = Number(localStorage.getItem('cantidad')) || 0;
 
 const lista = document.getElementById('lista');
@@ -124,7 +55,7 @@ const sel = document.getElementById('sel');
 const btn = document.getElementById('continuar');
 
 let seleccionados = [];
-let bloqueados = []; // luego Firebase
+let bloqueados = [];
 
 req.innerText = cantidad;
 
@@ -134,9 +65,6 @@ for(let i=0;i<TOTAL;i++){
   const d = document.createElement('div');
   d.innerText = n;
   d.className = 'num';
-
-  if(bloqueados.includes(n)) d.classList.add('blocked');
-
   d.onclick = () => toggle(n,d);
   lista.appendChild(d);
 }
@@ -169,40 +97,33 @@ function actualizar(){
 function completarAzar(){
   while(seleccionados.length < cantidad){
     const n = Math.floor(Math.random()*TOTAL).toString().padStart(4,'0');
-    if(!seleccionados.includes(n) && !bloqueados.includes(n)){
+    if(!seleccionados.includes(n)){
       seleccionados.push(n);
     }
   }
-
   document.querySelectorAll('.num').forEach(d=>{
     if(seleccionados.includes(d.innerText)){
       d.classList.add('selected');
     }
   });
-
   actualizar();
 }
-/* ✅ BUSCADOR FUNCIONAL (MISMA LÓGICA QUE AYER) */
+
 function filtrar(){
   const v = document.getElementById('buscador').value.trim();
   const nums = document.querySelectorAll('.num');
 
-  // si está vacío → mostrar todo
   if(v === ''){
     nums.forEach(n => n.style.display = '');
     return;
   }
-<script>
-  // solo permitir hasta 4 cifras
-  if(v.length > 4) return;
 
+  if(v.length > 4) return;
   nums.forEach(n => n.style.display = 'none');
 
-  // 3 cifras → rango de 10
   if(v.length === 3){
     const inicio = parseInt(v + '0');
     const fin = parseInt(v + '9');
-
     nums.forEach(n=>{
       const num = parseInt(n.innerText);
       if(num >= inicio && num <= fin){
@@ -211,7 +132,6 @@ function filtrar(){
     });
   }
 
-  // 4 cifras → número exacto
   if(v.length === 4){
     nums.forEach(n=>{
       if(n.innerText === v){
@@ -220,9 +140,6 @@ function filtrar(){
     });
   }
 }
-</script>
-<script>
-const PRECIO_POR_NUMERO = 5000;
 
 function irCheckout(){
   localStorage.setItem('numeros', JSON.stringify(seleccionados));
@@ -231,5 +148,6 @@ function irCheckout(){
   window.location.href = 'checkout.html';
 }
 </script>
+
 </body>
 </html>
