@@ -191,29 +191,37 @@ function irCheckout(){
 /* ✅ BUSCADOR FUNCIONAL (MISMA LÓGICA QUE AYER) */
 function filtrar(){
   const v = document.getElementById('buscador').value.trim();
+  const nums = document.querySelectorAll('.num');
 
-  // ocultar todo por defecto
-  document.querySelectorAll('.num').forEach(d=>{
-    d.style.display = 'none';
-  });
+  // si está vacío → mostrar todo
+  if(v === ''){
+    nums.forEach(n => n.style.display = '');
+    return;
+  }
 
-  // exactamente 3 cifras → rango de 10
+  // solo permitir hasta 4 cifras
+  if(v.length > 4) return;
+
+  nums.forEach(n => n.style.display = 'none');
+
+  // 3 cifras → rango de 10
   if(v.length === 3){
-    const inicio = v + '0';
-    const fin = v + '9';
+    const inicio = parseInt(v + '0');
+    const fin = parseInt(v + '9');
 
-    document.querySelectorAll('.num').forEach(d=>{
-      if(d.innerText >= inicio && d.innerText <= fin){
-        d.style.display = '';
+    nums.forEach(n=>{
+      const num = parseInt(n.innerText);
+      if(num >= inicio && num <= fin){
+        n.style.display = '';
       }
     });
   }
 
-  // exactamente 4 cifras → número exacto
+  // 4 cifras → número exacto
   if(v.length === 4){
-    document.querySelectorAll('.num').forEach(d=>{
-      if(d.innerText === v){
-        d.style.display = '';
+    nums.forEach(n=>{
+      if(n.innerText === v){
+        n.style.display = '';
       }
     });
   }
