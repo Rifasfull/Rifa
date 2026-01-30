@@ -182,12 +182,6 @@ function completarAzar(){
 
   actualizar();
 }
-
-function irCheckout(){
-  localStorage.setItem('numeros', JSON.stringify(seleccionados));
-  window.location.href = 'checkout.html';
-}
-
 /* ✅ BUSCADOR FUNCIONAL (MISMA LÓGICA QUE AYER) */
 function filtrar(){
   const v = document.getElementById('buscador').value.trim();
