@@ -111,7 +111,7 @@ button.disabled{
 
 <div class="card">
   <button class="secondary" onclick="completarAzar()">🎲 Completar al azar</button>
-  <button id="continuar" class="disabled" disabled onclick="irCheckout()">Continuar</button>
+  <button id="continuar" class="disabled" disabled onclick="irCheckout()">Continuar</localStorage.setItem("
 </div>
 
 <script>
@@ -226,7 +226,16 @@ function filtrar(){
     });
   }
 }
+<script>
+const PRECIO_POR_NUMERO = 5000;
 
+function irCheckout() {
+  localStorage.setItem("numeros", JSON.stringify(seleccionados));
+  localStorage.setItem("cantidad", seleccionados.length);
+  localStorage.setItem("total", seleccionados.length * PRECIO_POR_NUMERO);
+
+  window.location.href = "checkout.html";
+}
 </script>
 
 </body>
