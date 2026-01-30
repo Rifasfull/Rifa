@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎟️ Rifa Oficial</title>
+  <style>
+    body {font-family: Arial, sans-serif;background:#f2f2f2;margin:0;padding:15px;}
+    h1,h2,h3{text-align:center;}
+    .hero{background:white;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);text-align:center}
+    .hero img{max-width:100%;border-radius:12px;margin-bottom:10px}
+    .card{background:white;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+    button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#4CAF50;color:white;font-size:16px;cursor:pointer}
+    button.secondary{background:#2196F3}
+    button.disabled{background:#aaa;cursor:not-allowed}
+    input{width:100%;padding:10px;margin-top:6px;font-size:15px}
+    .packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="imagen.jpg" alt="Rifa">
+  <h1>🎟️ GRAN RIFA OFICIAL</h1>
+  <p>Entre más números tengas, más oportunidades de ganar</p>
+</div>
+
+<div class="card">
+  <h2>📦 Paquetes</h2>
+  <div class="packages">
+    <button onclick="elegirPaquete(10)">10 números<br>.000</button>
+    <button onclick="elegirPaquete(20)">20 números<br>.000</button>
+    <button onclick="elegirPaquete(50)">50 números<br>.000</button>
+    <button onclick="elegirPaquete(100)">100 números<br>.000</button>
+    <button onclick="elegirPaquete(150)">150 números<br>.000</button>
+  </div>
+</div>
+
+<div class="card">
+  <h2>✏️ Personalizado</h2>
+  <input type="number" id="cantidad" min="10" placeholder="Cantidad de números" />
+  <button onclick="continuarPersonalizado()">Continuar</button>
+</div>
+
+<div class="card" id="opciones" style="display:none">
+  <h2>¿Cómo quieres tus números?</h2>
+  <button class="secondary" onclick="azar()">🎲 Al azar</button>
+  <button onclick="seleccionar()">✋ Seleccionar números</button>
+</div>
+<script>
+let cantidad = 0;
+
+// cuando elige un paquete
+function elegirPaquete(c){
+  cantidad = c;
+  mostrarOpciones();
+}
+
+// cantidad personalizada
+function continuarPersonalizado(){
+  const c = Number(document.getElementById('cantidad').value);
+  if(c < 1){
+    alert('Ingresa una cantidad válida');
+    return;
+  }
+  cantidad = c;
+  mostrarOpciones();
+}
+
+// mostrar opciones
+function mostrarOpciones(){
+  document.getElementById('opciones').style.display = 'block';
+  document.getElementById('opciones').scrollIntoView({behavior:'smooth'});
+}
+
+// al azar → checkout
+function azar(){
+  localStorage.setItem('cantidad', cantidad);
+  localStorage.setItem('modo', 'azar');
+  window.location.href = 'checkout.html';
+}
+
+// seleccionar → seleccionador
+function seleccionar(){
+  localStorage.setItem('cantidad', cantidad);
+  localStorage.setItem('modo', 'seleccionar');
+  window.location.href = 'seleccionar.html';
+}
+</script>
+
+
+</body>
+</html>

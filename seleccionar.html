@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 Seleccionar números</title>
+
+<style>
+body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
+h1{text-align:center}
+
+.card{
+  background:white;
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:16px;
+  box-shadow:0 4px 10px rgba(0,0,0,.08)
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  font-size:15px
+}
+
+.grid-wrapper{
+  max-height:360px;
+  overflow-y:auto;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:8px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(60px,1fr));
+  gap:8px
+}
+
+.num{
+  padding:10px;
+  text-align:center;
+  border-radius:6px;
+  background:#e0e0e0;
+  cursor:pointer;
+  font-size:14px
+}
+
+.num.selected{
+  background:#4CAF50;
+  color:white
+}
+
+.num.blocked{
+  background:#c62828;
+  color:white;
+  cursor:not-allowed
+}
+
+.fixed-actions{
+  position:sticky;
+  top:0;
+  background:white;
+  padding-bottom:10px;
+  z-index:10
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer
+}
+
+button.primary{
+  background:#4CAF50;
+  color:white
+}
+
+button.secondary{
+  background:#2196F3;
+  color:white
+}
+
+button.disabled{
+  background:#aaa;
+  cursor:not-allowed
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎯 Selecciona tus números</h1>
+
+<div class="card">
+  <div class="fixed-actions">
+    <p><strong>Cantidad requerida:</strong> <span id="req"></span></p>
+    <p><strong>Seleccionados:</strong> <span id="sel">0</span></p>
+    <input id="buscador" placeholder="Buscar número (ej: 0007)" oninput="filtrar()">
+  </div>
+
+  <div class="grid-wrapper">
+    <div class="grid" id="lista"></div>
+  </div>
+</div>
+
+<div class="card">
+  <button class="secondary" onclick="completarAzar()">🎲 Completar al azar</button>
+  <button id="continuar" class="disabled" disabled onclick="irCheckout()">Continuar</button>
+</div>
+
+<script>
+const TOTAL = 10000;
+const cantidad = Number(localStorage.getItem('cantidad')) || 0;
+
+const lista = document.getElementById('lista');
+const req = document.getElementById('req');
+const sel = document.getElementById('sel');
+const btn = document.getElementById('continuar');
+
+let seleccionados = [];
+let bloqueados = []; // luego Firebase
+
+req.innerText = cantidad;
+
+// crear números
+for(let i=0;i<TOTAL;i++){
+  const n = i.toString().padStart(4,'0');
+  const d = document.createElement('div');
+  d.innerText = n;
+  d.className = 'num';
+
+  if(bloqueados.includes(n)) d.classList.add('blocked');
+
+  d.onclick = () => toggle(n,d);
+  lista.appendChild(d);
+}
+
+function toggle(n,el){
+  if(el.classList.contains('blocked')) return;
+
+  if(el.classList.contains('selected')){
+    el.classList.remove('selected');
+    seleccionados = seleccionados.filter(x=>x!==n);
+  }else{
+    if(seleccionados.length >= cantidad) return;
+    el.classList.add('selected');
+    seleccionados.push(n);
+  }
+  actualizar();
+}
+
+function actualizar(){
+  sel.innerText = seleccionados.length;
+  if(seleccionados.length === cantidad){
+    btn.disabled = false;
+    btn.className = 'primary';
+  }else{
+    btn.disabled = true;
+    btn.className = 'disabled';
+  }
+}
+
+function completarAzar(){
+  while(seleccionados.length < cantidad){
+    const n = Math.floor(Math.random()*TOTAL).toString().padStart(4,'0');
+    if(!seleccionados.includes(n) && !bloqueados.includes(n)){
+      seleccionados.push(n);
+    }
+  }
+
+  document.querySelectorAll('.num').forEach(d=>{
+    if(seleccionados.includes(d.innerText)){
+      d.classList.add('selected');
+    }
+  });
+
+  actualizar();
+}
+
+function irCheckout(){
+  localStorage.setItem('numeros', JSON.stringify(seleccionados));
+  window.location.href = 'checkout.html';
+}
+
+/* ✅ BUSCADOR FUNCIONAL (MISMA LÓGICA QUE AYER) */
+function filtrar(){
+  const v = document.getElementById('buscador').value.trim();
+
+  // ocultar todo por defecto
+  document.querySelectorAll('.num').forEach(d=>{
+    d.style.display = 'none';
+  });
+
+  // exactamente 3 cifras → rango de 10
+  if(v.length === 3){
+    const inicio = v + '0';
+    const fin = v + '9';
+
+    document.querySelectorAll('.num').forEach(d=>{
+      if(d.innerText >= inicio && d.innerText <= fin){
+        d.style.display = '';
+      }
+    });
+  }
+
+  // exactamente 4 cifras → número exacto
+  if(v.length === 4){
+    document.querySelectorAll('.num').forEach(d=>{
+      if(d.innerText === v){
+        d.style.display = '';
+      }
+    });
+  }
+}
+
+</script>
+
+</body>
+</html>
