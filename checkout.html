@@ -1,127 +1,174 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Finalizar compra</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finalizar compra</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f4f7;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 420px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(0,0,0,.1);
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .resumen {
-      background: #f7f7f7;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    .nequi {
-      background: #00c853;
-      color: white;
-    }
-
-    .disabled {
-      background: #ddd;
-      color: #777;
-      cursor: not-allowed;
-    }
-
-    .nota {
-      font-size: 13px;
-      color: #666;
-      text-align: center;
-      margin-top: 15px;
-    }
-  </style>
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background:#f2f4f7;
+  margin:0;
+  padding:0;
+}
+.container{
+  max-width:420px;
+  margin:40px auto;
+  background:#fff;
+  padding:25px;
+  border-radius:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.1);
+}
+h1{text-align:center;margin-bottom:20px}
+.resumen{
+  background:#f7f7f7;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:20px;
+  text-align:center;
+  font-weight:bold;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:bold;
+  margin-top:10px;
+  cursor:pointer;
+}
+.nequi{background:#00c853;color:white}
+.confirmar{background:#2196F3;color:white}
+.disabled{
+  background:#ddd;
+  color:#777;
+  cursor:not-allowed;
+}
+.nota{
+  font-size:13px;
+  color:#666;
+  text-align:center;
+  margin-top:15px;
+}
+.alerta{
+  background:#fff3cd;
+  color:#856404;
+  padding:10px;
+  border-radius:8px;
+  font-size:13px;
+  margin-top:10px;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>💳 Finalizar compra</h1>
+<div class="container">
+  <h1>💳 Finalizar compra</h1>
 
-    <div id="resumen" class="resumen">
-      Cargando datos de compra...
-    </div>
+  <div id="resumen" class="resumen">Cargando...</div>
 
-    <input type="text" id="nombre" placeholder="Nombre completo">
-    <input type="email" id="correo" placeholder="Correo electrónico">
-    <input type="tel" id="telefono" placeholder="Número de teléfono">
-    <input type="text" id="ciudad" placeholder="Ciudad">
+  <input id="nombre" placeholder="Nombre completo">
+  <input id="correo" type="email" placeholder="Correo electrónico">
+  <input id="telefono" placeholder="Teléfono">
+  <input id="ciudad" placeholder="Ciudad">
 
-    <button class="nequi" onclick="pagarNequi()">Pagar con Nequi</button>
+  <button class="nequi" onclick="irNequi()">Pagar con Nequi</button>
 
-    <button class="disabled">Daviplata (próximamente)</button>
-    <button class="disabled">Bancolombia / BPay (próximamente)</button>
+  <button class="confirmar" onclick="confirmarPago()">✅ Ya realicé el pago</button>
 
-    <p class="nota">
-      Tus números quedarán reservados hasta que confirmemos el pago.
-    </p>
+  <button class="disabled">Daviplata (próximamente)</button>
+  <button class="disabled">Bancolombia / BPay (próximamente)</button>
+
+  <div class="alerta">
+    ⚠️ Al confirmar el pago, tu compra quedará <b>pendiente de verificación</b>.  
+    Si el pago no es confirmado, los números se liberarán.
   </div>
+</div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  const numeros = JSON.parse(localStorage.getItem("numeros"));
-  const cantidad = localStorage.getItem("cantidad");
-  const total = localStorage.getItem("total");
+const firebaseConfig = {
+  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+  authDomain: "rifa-2026-1a341.firebaseapp.com",
+  projectId: "rifa-2026-1a341",
+  storageBucket: "rifa-2026-1a341.firebasestorage.app",
+  messagingSenderId: "163526935865",
+  appId: "1:163526935865:web:1c7c235bf4abb94a1514e8"
+};
 
-  const resumen = document.getElementById("resumen");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  if (!numeros || numeros.length === 0) {
-    resumen.innerHTML = "❌ No hay datos de compra";
+// DATOS DESDE SELECCIONAR
+const numeros = JSON.parse(localStorage.getItem("numeros")) || [];
+const cantidad = numeros.length;
+const precioPorNumero = 2000; // AJUSTA SI QUIERES
+const total = cantidad * precioPorNumero;
+
+const resumen = document.getElementById("resumen");
+
+if(cantidad < 10){
+  resumen.innerHTML = "❌ Compra mínima: 10 números";
+}else{
+  resumen.innerHTML = `
+    🎟 Números:<br>${numeros.join(", ")}<br><br>
+    💰 Total a pagar:<br>$${total.toLocaleString()}
+  `;
+}
+
+// REDIRIGE A NEQUI (MANUAL)
+window.irNequi = function(){
+  const texto = `Hola, quiero pagar $${total} por la rifa.`;
+  window.open(`https://api.whatsapp.com/send?phone=57&text=${encodeURIComponent(texto)}`,"_blank");
+}
+
+// CONFIRMAR PAGO → GUARDA EN FIRESTORE
+window.confirmarPago = async function(){
+  if(cantidad < 10){
+    alert("La compra mínima es de 10 números");
     return;
   }
 
-  resumen.innerHTML = `
-    Números seleccionados:<br><br>
-    ${numeros.join(", ")}<br><br>
-    Cantidad: ${cantidad}<br>
-    Total a pagar: $${Number(total).toLocaleString()}
-  `;
+  const nombre = nombre.value.trim();
+  const correo = correo.value.trim();
+  const telefono = telefono.value.trim();
+  const ciudad = ciudad.value.trim();
 
-});
+  if(!nombre || !correo || !telefono || !ciudad){
+    alert("Completa todos los datos");
+    return;
+  }
+
+  await addDoc(collection(db,"compras"),{
+    nombre,
+    correo,
+    telefono,
+    ciudad,
+    numeros,
+    cantidad,
+    total,
+    metodo:"Nequi",
+    estado:"pendiente",
+    fecha: serverTimestamp()
+  });
+
+  alert("✅ Compra registrada. En breve confirmaremos tu pago.");
+  localStorage.clear();
+  window.location.href="index.html";
+}
 </script>
 
 </body>
