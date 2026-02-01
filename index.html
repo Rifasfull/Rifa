@@ -4,19 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎟️ Rifa Oficial</title>
+
   <style>
-    body {font-family: Arial, sans-serif;background:#f2f2f2;margin:0;padding:15px;}
-    h1,h2,h3{text-align:center;}
-    .hero{background:white;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);text-align:center}
+    body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
+    h1,h2,h3{text-align:center}
+    .hero{background:#fff;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);text-align:center}
     .hero img{max-width:100%;border-radius:12px;margin-bottom:10px}
-    .card{background:white;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+    .card{background:#fff;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
     button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#4CAF50;color:white;font-size:16px;cursor:pointer}
     button.secondary{background:#2196F3}
     button.disabled{background:#aaa;cursor:not-allowed}
     input{width:100%;padding:10px;margin-top:6px;font-size:15px}
     .packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+    .resultado{margin-top:10px;font-size:14px}
   </style>
 </head>
+
 <body>
 
 <div class="hero">
@@ -28,17 +31,17 @@
 <div class="card">
   <h2>📦 Paquetes</h2>
   <div class="packages">
-    <button onclick="elegirPaquete(10)">10 números<br>50.000</button>
-    <button onclick="elegirPaquete(20)">20 números<br>100.000</button>
-    <button onclick="elegirPaquete(50)">50 números<br>250.000</button>
-    <button onclick="elegirPaquete(100)">100 números<br>500.000</button>
-    <button onclick="elegirPaquete(150)">150 números<br>750.000</button>
+    <button onclick="elegirPaquete(10)">10 números<br>$50.000</button>
+    <button onclick="elegirPaquete(20)">20 números<br>$100.000</button>
+    <button onclick="elegirPaquete(50)">50 números<br>$250.000</button>
+    <button onclick="elegirPaquete(100)">100 números<br>$500.000</button>
+    <button onclick="elegirPaquete(150)">150 números<br>$750.000</button>
   </div>
 </div>
 
 <div class="card">
   <h2>✏️ Personalizado</h2>
-  <input type="number" id="cantidad" min="10" placeholder="Cantidad de números" />
+  <input type="number" id="cantidad" min="10" placeholder="Mínimo 10 números" />
   <button onclick="continuarPersonalizado()">Continuar</button>
 </div>
 
@@ -47,47 +50,93 @@
   <button class="secondary" onclick="azar()">🎲 Al azar</button>
   <button onclick="seleccionar()">✋ Seleccionar números</button>
 </div>
+
+<div class="card">
+  <h2>🔎 Buscar mis números</h2>
+  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
+  <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
+  <div id="resultado" class="resultado"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+  authDomain: "rifa-2026-1a341.firebaseapp.com",
+  projectId: "rifa-2026-1a341"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.buscarPorCorreo = async function(){
+  const correo = document.getElementById("correoBuscar").value.trim();
+  const res = document.getElementById("resultado");
+
+  if(!correo){
+    res.innerHTML = "❌ Ingresa un correo válido";
+    return;
+  }
+
+  const q = query(collection(db,"compras"), where("cliente.correo","==",correo));
+  const snap = await getDocs(q);
+
+  if(snap.empty){
+    res.innerHTML = "❌ No se encontraron compras con ese correo";
+    return;
+  }
+
+  let html = "";
+  snap.forEach(d=>{
+    const c = d.data();
+    html += `
+      🎟 <b>${c.numeros.join(", ")}</b><br>
+      💰 $${c.total.toLocaleString()}<br>
+      📌 ${c.estado}<hr>
+    `;
+  });
+
+  res.innerHTML = html;
+};
+</script>
+
 <script>
 let cantidad = 0;
 
-// cuando elige un paquete
 function elegirPaquete(c){
   cantidad = c;
   mostrarOpciones();
 }
 
-// cantidad personalizada
 function continuarPersonalizado(){
   const c = Number(document.getElementById('cantidad').value);
-  if(c < 1){
-    alert('Ingresa una cantidad válida');
+  if(c < 10){
+    alert('La compra mínima es de 10 números');
     return;
   }
   cantidad = c;
   mostrarOpciones();
 }
 
-// mostrar opciones
 function mostrarOpciones(){
   document.getElementById('opciones').style.display = 'block';
   document.getElementById('opciones').scrollIntoView({behavior:'smooth'});
 }
 
-// al azar → checkout
 function azar(){
   localStorage.setItem('cantidad', cantidad);
-  localStorage.setItem('modo', 'azar');
+  localStorage.setItem('modo','azar');
   window.location.href = 'checkout.html';
 }
 
-// seleccionar → seleccionador
 function seleccionar(){
   localStorage.setItem('cantidad', cantidad);
-  localStorage.setItem('modo', 'seleccionar');
+  localStorage.setItem('modo','seleccionar');
   window.location.href = 'seleccionar.html';
 }
 </script>
-
 
 </body>
 </html>
