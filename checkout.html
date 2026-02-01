@@ -54,12 +54,6 @@ button{
   color:#777;
   cursor:not-allowed;
 }
-.nota{
-  font-size:13px;
-  color:#666;
-  text-align:center;
-  margin-top:15px;
-}
 .alerta{
   background:#fff3cd;
   color:#856404;
@@ -112,16 +106,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// DATOS DESDE SELECCIONAR
+// DATOS
 const numeros = JSON.parse(localStorage.getItem("numeros")) || [];
 const cantidad = numeros.length;
-const precioPorNumero = 2000; // AJUSTA SI QUIERES
+const precioPorNumero = 5000;
 const total = cantidad * precioPorNumero;
 
 const resumen = document.getElementById("resumen");
 
 if(cantidad < 10){
-  resumen.innerHTML = "❌ Compra mínima: 10 números";
+  resumen.innerHTML = "❌ Compra mínima: 10 números ($50.000)";
 }else{
   resumen.innerHTML = `
     🎟 Números:<br>${numeros.join(", ")}<br><br>
@@ -129,34 +123,39 @@ if(cantidad < 10){
   `;
 }
 
-// REDIRIGE A NEQUI (MANUAL)
+// IR A NEQUI (MANUAL)
 window.irNequi = function(){
-  const texto = `Hola, quiero pagar $${total} por la rifa.`;
-  window.open(`https://api.whatsapp.com/send?phone=57&text=${encodeURIComponent(texto)}`,"_blank");
+  const telefonoNequi = "3113959486";
+  const referencia = `Rifa ${numeros.join("-")}`;
+  const mensaje = `Hola, quiero pagar $${total} por la rifa. Ref: ${referencia}`;
+  window.open(
+    `https://api.whatsapp.com/send?phone=57${telefonoNequi}&text=${encodeURIComponent(mensaje)}`,
+    "_blank"
+  );
 }
 
-// CONFIRMAR PAGO → GUARDA EN FIRESTORE
+// CONFIRMAR PAGO
 window.confirmarPago = async function(){
   if(cantidad < 10){
     alert("La compra mínima es de 10 números");
     return;
   }
 
-  const nombre = nombre.value.trim();
-  const correo = correo.value.trim();
-  const telefono = telefono.value.trim();
-  const ciudad = ciudad.value.trim();
+  const nombreVal = document.getElementById("nombre").value.trim();
+  const correoVal = document.getElementById("correo").value.trim();
+  const telefonoVal = document.getElementById("telefono").value.trim();
+  const ciudadVal = document.getElementById("ciudad").value.trim();
 
-  if(!nombre || !correo || !telefono || !ciudad){
+  if(!nombreVal || !correoVal || !telefonoVal || !ciudadVal){
     alert("Completa todos los datos");
     return;
   }
 
   await addDoc(collection(db,"compras"),{
-    nombre,
-    correo,
-    telefono,
-    ciudad,
+    nombre: nombreVal,
+    correo: correoVal,
+    telefono: telefonoVal,
+    ciudad: ciudadVal,
     numeros,
     cantidad,
     total,
