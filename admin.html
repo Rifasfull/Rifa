@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Admin – Rifa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background:#f2f2f2;
+  padding:15px;
+}
+h2{text-align:center}
+.card{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+  box-shadow:0 3px 8px rgba(0,0,0,.15);
+}
+.estado-pendiente{color:#e53935;font-weight:bold}
+.estado-confirmado{color:#2e7d32;font-weight:bold}
+.fecha{font-size:13px;color:#555;margin-bottom:6px}
+button{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  font-size:14px;
+  cursor:pointer;
+  margin-right:6px;
+}
+.confirmar{background:#4CAF50;color:#fff}
+.cancelar{background:#c62828;color:#fff}
+</style>
+</head>
+
+<body>
+
+<h2>📋 Panel de administración</h2>
+<div id="lista"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+  authDomain: "rifa-2026-1a341.firebaseapp.com",
+  projectId: "rifa-2026-1a341",
+  storageBucket: "rifa-2026-1a341.firebasestorage.app",
+  messagingSenderId: "163526935865",
+  appId: "1:163526935865:web:1c7c235bf4abb94a1514e8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const contenedor = document.getElementById("lista");
+
+onSnapshot(collection(db,"compras"), snap=>{
+  contenedor.innerHTML = "";
+
+  snap.forEach(d=>{
+    const c = d.data();
+
+    const fecha = c.fecha
+      ? c.fecha.toDate().toLocaleString()
+      : "Sin fecha";
+
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <div class="fecha">🕒 ${fecha}</div>
+      <b>👤 ${c.nombre}</b><br>
+      📧 ${c.correo}<br>
+      📱 ${c.telefono}<br>
+      🌆 ${c.ciudad}<br><br>
+
+      🎟 <b>Números:</b><br>${c.numeros.join(", ")}<br><br>
+      💰 <b>Total:</b> $${c.total.toLocaleString()}<br>
+      🏦 <b>Método:</b> ${c.metodo}<br>
+      📌 Estado:
+      <span class="estado-${c.estado}">
+        ${c.estado}
+      </span><br><br>
+
+      ${
+        c.estado === "pendiente"
+        ? `
+          <button class="confirmar" onclick="confirmar('${d.id}')">
+            Confirmar pago
+          </button>
+          <button class="cancelar" onclick="cancelar('${d.id}')">
+            Cancelar
+          </button>
+        `
+        : "✅ Pago confirmado"
+      }
+    `;
+
+    contenedor.appendChild(div);
+  });
+});
+
+window.confirmar = async function(id){
+  if(!confirm("¿Confirmar este pago?")) return;
+  await updateDoc(doc(db,"compras",id),{estado:"confirmado"});
+};
+
+window.cancelar = async function(id){
+  if(!confirm("¿Cancelar y liberar números?")) return;
+  await updateDoc(doc(db,"compras",id),{estado:"cancelado"});
+};
+</script>
+
+</body>
+</html>
