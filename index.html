@@ -60,7 +60,6 @@ input{
 
 <body>
 
-<!-- 🎞️ CARRUSEL -->
 <div class="hero">
   <img id="slide" src="img/Foto1.jpg" alt="Rifa">
   <h1>🎟️ GRAN RIFA OFICIAL</h1>
@@ -90,7 +89,6 @@ input{
   <button onclick="seleccionar()">✋ Seleccionar</button>
 </div>
 
-<!-- 🔎 BUSCAR POR CORREO -->
 <div class="card">
   <h2>🔎 Buscar mis números</h2>
   <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
@@ -111,6 +109,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// 👉 lo exponemos para usarlo abajo
+window.db = db;
+window.collection = collection;
+window.query = query;
+window.where = where;
+window.getDocs = getDocs;
 
 window.buscarPorCorreo = async function(){
   const correo = document.getElementById("correoBuscar").value.trim();
@@ -145,12 +150,7 @@ window.buscarPorCorreo = async function(){
 
 <script>
 /* 🎞️ CARRUSEL */
-const fotos = [
-  "Foto1.JPG",
-  "Foto2.JPG",
-  "Foto3.JPG",
-  "Foto4.JPG"
-];
+const fotos = ["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
 let i = 0;
 setInterval(()=>{
   i = (i+1) % fotos.length;
@@ -160,6 +160,7 @@ setInterval(()=>{
 /* 🎟️ LÓGICA COMPRA */
 let cantidad = 0;
 const PRECIO = 5000;
+const TOTAL = 10000;
 
 function elegir(c){
   cantidad = c;
@@ -181,12 +182,40 @@ function mostrarOpciones(){
   document.getElementById("opciones").scrollIntoView({behavior:"smooth"});
 }
 
-function azar(){
+// 🎲 AL AZAR RESPETANDO RESERVADOS
+async function azar(){
+  const bloqueados = [];
+
+  const q = query(
+    collection(db,"compras"),
+    where("estado","in",["pendiente","confirmado"])
+  );
+  const snap = await getDocs(q);
+
+  snap.forEach(d=>{
+    const c = d.data();
+    if(Array.isArray(c.numeros)){
+      bloqueados.push(...c.numeros);
+    }
+  });
+
+  const libres = [];
+  for(let i=0;i<TOTAL;i++){
+    const n = i.toString().padStart(4,"0");
+    if(!bloqueados.includes(n)) libres.push(n);
+  }
+
+  if(libres.length < cantidad){
+    alert("❌ No hay suficientes números disponibles");
+    return;
+  }
+
   const numeros = [];
   while(numeros.length < cantidad){
-    const n = Math.floor(Math.random()*10000).toString().padStart(4,"0");
-    if(!numeros.includes(n)) numeros.push(n);
+    const r = libres[Math.floor(Math.random()*libres.length)];
+    if(!numeros.includes(r)) numeros.push(r);
   }
+
   localStorage.setItem("numeros", JSON.stringify(numeros));
   localStorage.setItem("cantidad", cantidad);
   localStorage.setItem("total", cantidad * PRECIO);
