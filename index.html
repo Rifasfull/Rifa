@@ -6,19 +6,63 @@
 <title>🎟️ Rifa Oficial</title>
 
 <style>
-body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
+body{
+  font-family:Arial,sans-serif;
+  background:#f2f2f2;
+  margin:0;
+  padding:15px
+}
 h1,h2{text-align:center}
-.hero,.card{background:#fff;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
-button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#4CAF50;color:white;font-size:16px}
+.hero,.card{
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:16px;
+  box-shadow:0 4px 10px rgba(0,0,0,.08)
+}
+.hero img{
+  width:100%;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  background:#4CAF50;
+  color:white;
+  font-size:16px;
+  cursor:pointer
+}
 button.secondary{background:#2196F3}
-input{width:100%;padding:10px;margin-top:6px;font-size:15px}
-.packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+input{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  font-size:15px
+}
+.packages{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px
+}
+.resultado{
+  margin-top:10px;
+  font-size:14px;
+  background:#f7f7f7;
+  padding:10px;
+  border-radius:8px;
+}
 </style>
 </head>
 
 <body>
 
+<!-- 🎞️ CARRUSEL -->
 <div class="hero">
+  <img id="slide" src="img/Foto1.jpg" alt="Rifa">
   <h1>🎟️ GRAN RIFA OFICIAL</h1>
   <p>Entre más números tengas, más oportunidades de ganar</p>
 </div>
@@ -46,7 +90,74 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   <button onclick="seleccionar()">✋ Seleccionar</button>
 </div>
 
+<!-- 🔎 BUSCAR POR CORREO -->
+<div class="card">
+  <h2>🔎 Buscar mis números</h2>
+  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
+  <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
+  <div id="resultado" class="resultado"></div>
+</div>
+
+<!-- 🔥 FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+  authDomain: "rifa-2026-1a341.firebaseapp.com",
+  projectId: "rifa-2026-1a341"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.buscarPorCorreo = async function(){
+  const correo = document.getElementById("correoBuscar").value.trim();
+  const res = document.getElementById("resultado");
+
+  if(!correo){
+    res.innerHTML = "❌ Ingresa un correo válido";
+    return;
+  }
+
+  const q = query(collection(db,"compras"), where("correo","==",correo));
+  const snap = await getDocs(q);
+
+  if(snap.empty){
+    res.innerHTML = "❌ No se encontraron compras con ese correo";
+    return;
+  }
+
+  let html = "";
+  snap.forEach(d=>{
+    const c = d.data();
+    html += `
+      🎟 <b>${c.numeros.join(", ")}</b><br>
+      💰 $${c.total.toLocaleString()}<br>
+      📌 Estado: ${c.estado}<hr>
+    `;
+  });
+
+  res.innerHTML = html;
+};
+</script>
+
 <script>
+/* 🎞️ CARRUSEL */
+const fotos = [
+  "img/Foto1.jpg",
+  "img/Foto2.jpg",
+  "img/Foto3.jpg",
+  "img/Foto4.jpg"
+];
+let i = 0;
+setInterval(()=>{
+  i = (i+1) % fotos.length;
+  document.getElementById("slide").src = fotos[i];
+},3000);
+
+/* 🎟️ LÓGICA COMPRA */
 let cantidad = 0;
 const PRECIO = 5000;
 
@@ -70,22 +181,18 @@ function mostrarOpciones(){
   document.getElementById("opciones").scrollIntoView({behavior:"smooth"});
 }
 
-// 🎲 AL AZAR → GENERA NÚMEROS
 function azar(){
   const numeros = [];
   while(numeros.length < cantidad){
     const n = Math.floor(Math.random()*10000).toString().padStart(4,"0");
     if(!numeros.includes(n)) numeros.push(n);
   }
-
   localStorage.setItem("numeros", JSON.stringify(numeros));
   localStorage.setItem("cantidad", cantidad);
   localStorage.setItem("total", cantidad * PRECIO);
-
   window.location.href="checkout.html";
 }
 
-// ✋ SELECCIONAR
 function seleccionar(){
   localStorage.setItem("cantidad", cantidad);
   window.location.href="seleccionar.html";
