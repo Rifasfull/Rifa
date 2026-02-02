@@ -9,17 +9,18 @@
 body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
 h1{text-align:center}
 .card{background:white;padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
-input{width:100%;padding:10px;margin-bottom:10px;font-size:15px}
 .grid-wrapper{max-height:360px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:8px}
 .num{padding:10px;text-align:center;border-radius:6px;background:#e0e0e0;cursor:pointer;font-size:14px}
 .num.selected{background:#4CAF50;color:white}
 .num.blocked{background:#c62828;color:white;cursor:not-allowed}
-.fixed-actions{position:sticky;top:0;background:white;padding-bottom:10px;z-index:10}
-button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;font-size:16px;cursor:pointer}
-button.primary{background:#4CAF50;color:white}
-button.secondary{background:#2196F3;color:white}
-button.disabled{background:#aaa;cursor:not-allowed}
+.fixed{position:sticky;top:0;background:white;padding-bottom:10px;z-index:10}
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;font-size:16px}
+.primary{background:#4CAF50;color:white}
+.secondary{background:#2196F3;color:white}
+.disabled{background:#aaa;color:#555}
+input{width:100%;padding:10px;margin-top:8px}
+.loader{text-align:center;padding:20px;color:#777}
 </style>
 </head>
 
@@ -28,13 +29,14 @@ button.disabled{background:#aaa;cursor:not-allowed}
 <h1>🎯 Selecciona tus números</h1>
 
 <div class="card">
-  <div class="fixed-actions">
-    <p><strong>Cantidad requerida:</strong> <span id="req"></span></p>
-    <p><strong>Seleccionados:</strong> <span id="sel">0</span></p>
-    <input id="buscador" placeholder="Buscar número (ej: 0007)" oninput="filtrar()">
+  <div class="fixed">
+    <p><b>Cantidad requerida:</b> <span id="req"></span></p>
+    <p><b>Seleccionados:</b> <span id="sel">0</span></p>
+    <input id="buscador" placeholder="Buscar número (ej: 0123)">
   </div>
 
   <div class="grid-wrapper">
+    <div id="loader" class="loader">Cargando números disponibles…</div>
     <div class="grid" id="lista"></div>
   </div>
 </div>
@@ -44,10 +46,9 @@ button.disabled{background:#aaa;cursor:not-allowed}
   <button id="continuar" class="disabled" disabled onclick="irCheckout()">Continuar</button>
 </div>
 
-<!-- 🔥 FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
@@ -59,105 +60,115 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const TOTAL = 10000;
-const PRECIO_POR_NUMERO = 5000;
-const cantidad = Number(localStorage.getItem('cantidad')) || 0;
+const PRECIO = 5000;
+const cantidad = Number(localStorage.getItem("cantidad")) || 0;
 
-const lista = document.getElementById('lista');
-const req = document.getElementById('req');
-const sel = document.getElementById('sel');
-const btn = document.getElementById('continuar');
-
-let seleccionados = [];
-let bloqueados = [];
+const lista = document.getElementById("lista");
+const req = document.getElementById("req");
+const sel = document.getElementById("sel");
+const btn = document.getElementById("continuar");
+const loader = document.getElementById("loader");
+const buscador = document.getElementById("buscador");
 
 req.innerText = cantidad;
 
-// 🔴 Cargar números bloqueados desde Firebase
-const snap = await getDocs(collection(db,"compras"));
-snap.forEach(d=>{
-  const c = d.data();
-  if(c.estado === "pendiente" || c.estado === "confirmado"){
-    bloqueados.push(...c.numeros);
+let seleccionados = [];
+let bloqueados = [];
+let disponibles = [];
+
+async function cargarNumeros(){
+  const q = query(
+    collection(db,"compras"),
+    where("estado","in",["pendiente","confirmado"])
+  );
+  const snap = await getDocs(q);
+
+  snap.forEach(d=>{
+    const c = d.data();
+    if(Array.isArray(c.numeros)){
+      bloqueados.push(...c.numeros);
+    }
+  });
+
+  for(let i=0;i<TOTAL;i++){
+    const n = i.toString().padStart(4,"0");
+    if(!bloqueados.includes(n)){
+      disponibles.push(n);
+    }
   }
-});
 
-// Crear grilla
-for(let i=0;i<TOTAL;i++){
-  const n = i.toString().padStart(4,'0');
-  const d = document.createElement('div');
-  d.innerText = n;
-  d.className = 'num';
+  render(disponibles);
+}
 
-  if(bloqueados.includes(n)){
-    d.classList.add('blocked');
-  }else{
-    d.onclick = () => toggle(n,d);
-  }
-
-  lista.appendChild(d);
+function render(arr){
+  loader.style.display="none";
+  lista.innerHTML="";
+  arr.forEach(n=>{
+    const d=document.createElement("div");
+    d.innerText=n;
+    d.className="num";
+    d.onclick=()=>toggle(n,d);
+    lista.appendChild(d);
+  });
 }
 
 function toggle(n,el){
-  if(el.classList.contains('blocked')) return;
+  if(el.classList.contains("blocked")) return;
 
-  if(el.classList.contains('selected')){
-    el.classList.remove('selected');
+  if(el.classList.contains("selected")){
+    el.classList.remove("selected");
     seleccionados = seleccionados.filter(x=>x!==n);
   }else{
-    if(seleccionados.length >= cantidad) return;
-    el.classList.add('selected');
+    if(seleccionados.length>=cantidad) return;
+    el.classList.add("selected");
     seleccionados.push(n);
   }
   actualizar();
 }
 
 function actualizar(){
-  sel.innerText = seleccionados.length;
-  if(seleccionados.length === cantidad){
-    btn.disabled = false;
-    btn.className = 'primary';
+  sel.innerText=seleccionados.length;
+  if(seleccionados.length===cantidad){
+    btn.disabled=false;
+    btn.className="primary";
   }else{
-    btn.disabled = true;
-    btn.className = 'disabled';
+    btn.disabled=true;
+    btn.className="disabled";
   }
 }
 
-function completarAzar(){
-  const disponibles = [];
-  document.querySelectorAll('.num').forEach(d=>{
-    if(!d.classList.contains('blocked') && !seleccionados.includes(d.innerText)){
-      disponibles.push(d.innerText);
-    }
-  });
+window.completarAzar=function(){
+  const faltan = cantidad - seleccionados.length;
+  if(faltan<=0) return;
 
-  while(seleccionados.length < cantidad && disponibles.length){
-    const i = Math.floor(Math.random()*disponibles.length);
-    const n = disponibles.splice(i,1)[0];
-    seleccionados.push(n);
+  const pool = disponibles.filter(n=>!seleccionados.includes(n));
+  for(let i=0;i<faltan;i++){
+    const r = pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+    seleccionados.push(r);
   }
 
-  document.querySelectorAll('.num').forEach(d=>{
+  document.querySelectorAll(".num").forEach(d=>{
     if(seleccionados.includes(d.innerText)){
-      d.classList.add('selected');
+      d.classList.add("selected");
     }
   });
-
   actualizar();
 }
 
-function filtrar(){
-  const v = document.getElementById('buscador').value.trim();
-  document.querySelectorAll('.num').forEach(n=>{
-    n.style.display = v === '' || n.innerText.includes(v) ? '' : 'none';
-  });
+buscador.oninput=function(){
+  const v = buscador.value.trim();
+  if(v===""){ render(disponibles); return; }
+  render(disponibles.filter(n=>n.startsWith(v)));
 }
 
-window.irCheckout = function(){
-  localStorage.setItem('numeros', JSON.stringify(seleccionados));
-  localStorage.setItem('cantidad', seleccionados.length);
-  localStorage.setItem('total', seleccionados.length * PRECIO_POR_NUMERO);
-  window.location.href = 'checkout.html';
+window.irCheckout=function(){
+  localStorage.setItem("numeros",JSON.stringify(seleccionados));
+  localStorage.setItem("cantidad",seleccionados.length);
+  localStorage.setItem("total",seleccionados.length*PRECIO);
+  location.href="checkout.html";
 }
+
+cargarNumeros();
 </script>
 
 </body>
