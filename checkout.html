@@ -79,22 +79,32 @@ button{
   cursor:not-allowed;
 }
 
-.metodo{
-  background:#f1f1f1;
-  padding:12px;
-  border-radius:10px;
-  margin-top:10px;
-  font-size:14px;
-}
-
 .alerta{
   background:#fff3cd;
   color:#856404;
-  padding:10px;
-  border-radius:8px;
-  font-size:13px;
-  margin-top:12px;
+  padding:12px;
+  border-radius:10px;
+  font-size:14px;
+  margin-bottom:15px;
   text-align:center;
+}
+
+/* MÉTODOS */
+.metodo-btn{
+  background:#f1f1f1;
+  padding:14px;
+  border-radius:10px;
+  margin-top:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.metodo-info{
+  display:none;
+  background:#fafafa;
+  padding:12px;
+  border-radius:10px;
+  margin-top:8px;
+  font-size:14px;
 }
 </style>
 </head>
@@ -106,12 +116,12 @@ button{
 
   <div class="resumen" id="resumen"></div>
 
-  <!-- PASO 1: DATOS -->
+  <!-- PASO 1 -->
   <div id="paso1">
     <input id="nombre" placeholder="Nombre completo">
     <input id="correo" type="email" placeholder="Correo electrónico">
     <input id="correo2" type="email" placeholder="Confirmar correo electrónico">
-    <input id="telefono" placeholder="Teléfono">
+    <input id="telefono" placeholder="Teléfono (WhatsApp)">
     <input id="ciudad" placeholder="Ciudad">
 
     <button id="btnContinuar" class="continuar disabled" disabled>
@@ -119,29 +129,34 @@ button{
     </button>
   </div>
 
-  <!-- PASO 2: PAGO -->
+  <!-- PASO 2 -->
   <div id="paso2" style="display:none">
+
     <div class="alerta">
-      ⏳ Tus números han sido <b>reservados por 30 minutos</b>.  
-      Realiza el pago con alguno de los siguientes métodos.
+      ⏳ Tus números han sido <b>reservados por 30 minutos</b>.<br><br>
+      Realiza la transferencia usando uno de los métodos disponibles.<br>
+      ⚠️ <b>El pago se valida de forma manual.</b><br><br>
+      Una vez confirmado tu pago, recibirás la confirmación
+      <b>por correo electrónico y WhatsApp</b>.
     </div>
 
-    <div class="metodo">
-      <b>🟣 Nequi</b><br>
+    <div class="metodo-btn" onclick="toggleMetodo('nequi')">🟣 Nequi</div>
+    <div id="nequi" class="metodo-info">
       Número: <b>3113959486</b><br>
       Nombre: <b>Miguel Moreno</b><br>
       Referencia: <b id="refPago"></b>
     </div>
 
-    <div class="metodo">
-      <b>🔵 Daviplata</b><br>
+    <div class="metodo-btn" onclick="toggleMetodo('daviplata')">🔵 Daviplata</div>
+    <div id="daviplata" class="metodo-info">
       <i>Disponible próximamente</i>
     </div>
 
-    <div class="metodo">
-      <b>🟢 Bancolombia</b><br>
+    <div class="metodo-btn" onclick="toggleMetodo('bancolombia')">🟢 Bancolombia</div>
+    <div id="bancolombia" class="metodo-info">
       <i>Disponible próximamente</i>
     </div>
+
   </div>
 </div>
 
@@ -158,12 +173,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// DATOS DE COMPRA
 const numeros = JSON.parse(localStorage.getItem("numeros")) || [];
 const total = numeros.length * 5000;
 
-const resumen = document.getElementById("resumen");
-resumen.innerHTML = `
+document.getElementById("resumen").innerHTML = `
   <b>🎟 Tus números</b>
   <div class="numeros-box">
     ${numeros.map(n=>`<span class="numero">${n}</span>`).join("")}
@@ -171,43 +184,38 @@ resumen.innerHTML = `
   <div class="total">💰 Total: $${total.toLocaleString()}</div>
 `;
 
-// VALIDACIÓN FORMULARIO
+const btn = document.getElementById("btnContinuar");
 const inputs = ["nombre","correo","correo2","telefono","ciudad"]
   .map(id=>document.getElementById(id));
-const btn = document.getElementById("btnContinuar");
 
-inputs.forEach(i=>i.addEventListener("input",validar));
+inputs.forEach(i=>i.addEventListener("input",()=>{
+  const [n,c,c2,t,ci] = inputs.map(x=>x.value.trim());
+  btn.disabled = !(n && c && c2 && t && ci && c===c2);
+  btn.classList.toggle("disabled", btn.disabled);
+}));
 
-function validar(){
-  const [n,c,c2,t,ci] = inputs.map(i=>i.value.trim());
-  if(n && c && c2 && t && ci && c===c2){
-    btn.disabled = false;
-    btn.classList.remove("disabled");
-  }else{
-    btn.disabled = true;
-    btn.classList.add("disabled");
-  }
-}
-
-// CONTINUAR → RESERVA
 btn.onclick = async ()=>{
-  const pedido = await addDoc(collection(db,"compras"),{
+  const doc = await addDoc(collection(db,"compras"),{
     nombre: nombre.value.trim(),
     correo: correo.value.trim(),
     telefono: telefono.value.trim(),
     ciudad: ciudad.value.trim(),
     numeros,
     total,
-    estado: "reservado",
-    fecha: serverTimestamp(),
-    reservaMinutos: 30
+    estado:"reservado",
+    fecha: serverTimestamp()
   });
 
-  document.getElementById("refPago").innerText = pedido.id;
-
+  document.getElementById("refPago").innerText = doc.id;
   document.getElementById("paso1").style.display="none";
   document.getElementById("paso2").style.display="block";
 };
+
+window.toggleMetodo = function(id){
+  document.querySelectorAll(".metodo-info").forEach(m=>{
+    m.style.display = m.id===id && m.style.display!=="block" ? "block" : "none";
+  });
+}
 </script>
 
 </body>
