@@ -44,7 +44,20 @@ button.disabled{background:#aaa;cursor:not-allowed}
   <button id="continuar" class="disabled" disabled onclick="irCheckout()">Continuar</button>
 </div>
 
-<script>
+<!-- 🔥 FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+  authDomain: "rifa-2026-1a341.firebaseapp.com",
+  projectId: "rifa-2026-1a341"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const TOTAL = 10000;
 const PRECIO_POR_NUMERO = 5000;
 const cantidad = Number(localStorage.getItem('cantidad')) || 0;
@@ -59,13 +72,28 @@ let bloqueados = [];
 
 req.innerText = cantidad;
 
-// crear números
+// 🔴 Cargar números bloqueados desde Firebase
+const snap = await getDocs(collection(db,"compras"));
+snap.forEach(d=>{
+  const c = d.data();
+  if(c.estado === "pendiente" || c.estado === "confirmado"){
+    bloqueados.push(...c.numeros);
+  }
+});
+
+// Crear grilla
 for(let i=0;i<TOTAL;i++){
   const n = i.toString().padStart(4,'0');
   const d = document.createElement('div');
   d.innerText = n;
   d.className = 'num';
-  d.onclick = () => toggle(n,d);
+
+  if(bloqueados.includes(n)){
+    d.classList.add('blocked');
+  }else{
+    d.onclick = () => toggle(n,d);
+  }
+
   lista.appendChild(d);
 }
 
@@ -95,53 +123,36 @@ function actualizar(){
 }
 
 function completarAzar(){
-  while(seleccionados.length < cantidad){
-    const n = Math.floor(Math.random()*TOTAL).toString().padStart(4,'0');
-    if(!seleccionados.includes(n)){
-      seleccionados.push(n);
+  const disponibles = [];
+  document.querySelectorAll('.num').forEach(d=>{
+    if(!d.classList.contains('blocked') && !seleccionados.includes(d.innerText)){
+      disponibles.push(d.innerText);
     }
+  });
+
+  while(seleccionados.length < cantidad && disponibles.length){
+    const i = Math.floor(Math.random()*disponibles.length);
+    const n = disponibles.splice(i,1)[0];
+    seleccionados.push(n);
   }
+
   document.querySelectorAll('.num').forEach(d=>{
     if(seleccionados.includes(d.innerText)){
       d.classList.add('selected');
     }
   });
+
   actualizar();
 }
 
 function filtrar(){
   const v = document.getElementById('buscador').value.trim();
-  const nums = document.querySelectorAll('.num');
-
-  if(v === ''){
-    nums.forEach(n => n.style.display = '');
-    return;
-  }
-
-  if(v.length > 4) return;
-  nums.forEach(n => n.style.display = 'none');
-
-  if(v.length === 3){
-    const inicio = parseInt(v + '0');
-    const fin = parseInt(v + '9');
-    nums.forEach(n=>{
-      const num = parseInt(n.innerText);
-      if(num >= inicio && num <= fin){
-        n.style.display = '';
-      }
-    });
-  }
-
-  if(v.length === 4){
-    nums.forEach(n=>{
-      if(n.innerText === v){
-        n.style.display = '';
-      }
-    });
-  }
+  document.querySelectorAll('.num').forEach(n=>{
+    n.style.display = v === '' || n.innerText.includes(v) ? '' : 'none';
+  });
 }
 
-function irCheckout(){
+window.irCheckout = function(){
   localStorage.setItem('numeros', JSON.stringify(seleccionados));
   localStorage.setItem('cantidad', seleccionados.length);
   localStorage.setItem('total', seleccionados.length * PRECIO_POR_NUMERO);
