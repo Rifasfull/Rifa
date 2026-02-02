@@ -69,9 +69,23 @@ button{
   margin-top:10px;
   cursor:pointer;
 }
-.nequi{background:#00c853;color:white}
-.confirmar{background:#2196F3;color:white}
-.disabled{background:#ddd;color:#777}
+
+.continuar{
+  background:#4CAF50;
+  color:white;
+}
+.continuar.disabled{
+  background:#ccc;
+  cursor:not-allowed;
+}
+
+.metodo{
+  background:#f1f1f1;
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+  font-size:14px;
+}
 
 .alerta{
   background:#fff3cd;
@@ -92,20 +106,42 @@ button{
 
   <div class="resumen" id="resumen"></div>
 
-  <input id="nombre" placeholder="Nombre completo">
-  <input id="correo" type="email" placeholder="Correo electrónico">
-  <input id="telefono" placeholder="Teléfono">
-  <input id="ciudad" placeholder="Ciudad">
+  <!-- PASO 1: DATOS -->
+  <div id="paso1">
+    <input id="nombre" placeholder="Nombre completo">
+    <input id="correo" type="email" placeholder="Correo electrónico">
+    <input id="correo2" type="email" placeholder="Confirmar correo electrónico">
+    <input id="telefono" placeholder="Teléfono">
+    <input id="ciudad" placeholder="Ciudad">
 
-  <button class="nequi" onclick="irNequi()">Pagar con Nequi</button>
-  <button class="confirmar" onclick="confirmarPago()">✅ Ya realicé el pago</button>
+    <button id="btnContinuar" class="continuar disabled" disabled>
+      Continuar
+    </button>
+  </div>
 
-  <button class="disabled">Daviplata (próximamente)</button>
-  <button class="disabled">Bancolombia / BPay (próximamente)</button>
+  <!-- PASO 2: PAGO -->
+  <div id="paso2" style="display:none">
+    <div class="alerta">
+      ⏳ Tus números han sido <b>reservados por 30 minutos</b>.  
+      Realiza el pago con alguno de los siguientes métodos.
+    </div>
 
-  <div class="alerta">
-    ⚠️ Tu compra quedará <b>pendiente de verificación</b>.  
-    Si el pago no se confirma, los números se liberarán.
+    <div class="metodo">
+      <b>🟣 Nequi</b><br>
+      Número: <b>3113959486</b><br>
+      Nombre: <b>Miguel Moreno</b><br>
+      Referencia: <b id="refPago"></b>
+    </div>
+
+    <div class="metodo">
+      <b>🔵 Daviplata</b><br>
+      <i>Disponible próximamente</i>
+    </div>
+
+    <div class="metodo">
+      <b>🟢 Bancolombia</b><br>
+      <i>Disponible próximamente</i>
+    </div>
   </div>
 </div>
 
@@ -122,68 +158,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// DATOS
+// DATOS DE COMPRA
 const numeros = JSON.parse(localStorage.getItem("numeros")) || [];
-const cantidad = numeros.length;
-const precioPorNumero = 5000;
-const total = cantidad * precioPorNumero;
+const total = numeros.length * 5000;
 
 const resumen = document.getElementById("resumen");
+resumen.innerHTML = `
+  <b>🎟 Tus números</b>
+  <div class="numeros-box">
+    ${numeros.map(n=>`<span class="numero">${n}</span>`).join("")}
+  </div>
+  <div class="total">💰 Total: $${total.toLocaleString()}</div>
+`;
 
-if(cantidad < 10){
-  resumen.innerHTML = "❌ Compra mínima: 10 números ($50.000)";
-}else{
-  resumen.innerHTML = `
-    <b>🎟 Tus números</b>
-    <div class="numeros-box">
-      ${numeros.map(n=>`<span class="numero">${n}</span>`).join("")}
-    </div>
-    <div class="total">💰 Total: $${total.toLocaleString()}</div>
-  `;
+// VALIDACIÓN FORMULARIO
+const inputs = ["nombre","correo","correo2","telefono","ciudad"]
+  .map(id=>document.getElementById(id));
+const btn = document.getElementById("btnContinuar");
+
+inputs.forEach(i=>i.addEventListener("input",validar));
+
+function validar(){
+  const [n,c,c2,t,ci] = inputs.map(i=>i.value.trim());
+  if(n && c && c2 && t && ci && c===c2){
+    btn.disabled = false;
+    btn.classList.remove("disabled");
+  }else{
+    btn.disabled = true;
+    btn.classList.add("disabled");
+  }
 }
 
-// NEQUI
-window.irNequi = function(){
-  const tel = "3113959486";
-  const ref = `Rifa ${numeros.join("-")}`;
-  const msg = `Hola, quiero pagar $${total}. Ref: ${ref}`;
-  window.open(`https://api.whatsapp.com/send?phone=57${tel}&text=${encodeURIComponent(msg)}`,"_blank");
-}
-
-// CONFIRMAR → BLOQUEA NÚMEROS
-window.confirmarPago = async function(){
-  if(cantidad < 10){
-    alert("La compra mínima es de 10 números");
-    return;
-  }
-
-  const nombre = document.getElementById("nombre").value.trim();
-  const correo = document.getElementById("correo").value.trim();
-  const telefono = document.getElementById("telefono").value.trim();
-  const ciudad = document.getElementById("ciudad").value.trim();
-
-  if(!nombre || !correo || !telefono || !ciudad){
-    alert("Completa todos los datos");
-    return;
-  }
-
-  await addDoc(collection(db,"compras"),{
-    nombre,
-    correo,
-    telefono,
-    ciudad,
+// CONTINUAR → RESERVA
+btn.onclick = async ()=>{
+  const pedido = await addDoc(collection(db,"compras"),{
+    nombre: nombre.value.trim(),
+    correo: correo.value.trim(),
+    telefono: telefono.value.trim(),
+    ciudad: ciudad.value.trim(),
     numeros,
-    cantidad,
     total,
-    metodo:"Nequi",
-    estado:"pendiente",   // 🔒 BLOQUEADO
-    fecha: serverTimestamp()
+    estado: "reservado",
+    fecha: serverTimestamp(),
+    reservaMinutos: 30
   });
 
-  alert("✅ Compra registrada. Números bloqueados temporalmente.");
-  localStorage.clear();
-  window.location.href="index.html";
-}
+  document.getElementById("refPago").innerText = pedido.id;
+
+  document.getElementById("paso1").style.display="none";
+  document.getElementById("paso2").style.display="block";
+};
 </script>
 
 </body>
