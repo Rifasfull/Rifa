@@ -6,12 +6,7 @@
 <title>🎟️ Rifa Oficial</title>
 
 <style>
-body{
-  font-family:Arial,sans-serif;
-  background:#f2f2f2;
-  margin:0;
-  padding:15px
-}
+body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
 h1,h2{text-align:center}
 .hero,.card{
   background:#fff;
@@ -20,11 +15,7 @@ h1,h2{text-align:center}
   margin-bottom:16px;
   box-shadow:0 4px 10px rgba(0,0,0,.08)
 }
-.hero img{
-  width:100%;
-  border-radius:12px;
-  margin-bottom:10px;
-}
+.hero img{width:100%;border-radius:12px;margin-bottom:10px}
 button{
   width:100%;
   padding:12px;
@@ -37,12 +28,7 @@ button{
   cursor:pointer
 }
 button.secondary{background:#2196F3}
-input{
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  font-size:15px
-}
+input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 .packages{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
@@ -63,7 +49,7 @@ input{
 <div class="hero">
   <img id="slide" src="img/Foto1.jpg" alt="Rifa">
   <h1>🎟️ GRAN RIFA OFICIAL</h1>
-  <p>Muy pronto todo esto sera tuyo, no desaproveches esta oportunidad ahora</p>
+  <p>Muy pronto todo esto será tuyo</p>
 </div>
 
 <div class="card">
@@ -110,7 +96,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 👉 lo exponemos para usarlo abajo
 window.db = db;
 window.collection = collection;
 window.query = query;
@@ -118,8 +103,8 @@ window.where = where;
 window.getDocs = getDocs;
 
 window.buscarPorCorreo = async function(){
-  const correo = document.getElementById("correoBuscar").value.trim();
-  const res = document.getElementById("resultado");
+  const correo = correoBuscar.value.trim();
+  const res = resultado;
 
   if(!correo){
     res.innerHTML = "❌ Ingresa un correo válido";
@@ -130,7 +115,7 @@ window.buscarPorCorreo = async function(){
   const snap = await getDocs(q);
 
   if(snap.empty){
-    res.innerHTML = "❌ No se encontraron compras con ese correo";
+    res.innerHTML = "❌ No se encontraron compras";
     return;
   }
 
@@ -138,9 +123,9 @@ window.buscarPorCorreo = async function(){
   snap.forEach(d=>{
     const c = d.data();
     html += `
-      🎟 <b>${c.numeros.join(", ")}</b><br>
+      🎟 ${c.numeros.join(", ")}<br>
       💰 $${c.total.toLocaleString()}<br>
-      📌 Estado: ${c.estado}<hr>
+      📌 ${c.estado}<hr>
     `;
   });
 
@@ -149,82 +134,71 @@ window.buscarPorCorreo = async function(){
 </script>
 
 <script>
-/* 🎞️ CARRUSEL */
-const fotos = ["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
-let i = 0;
+const fotos=["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
+let i=0;
 setInterval(()=>{
-  i = (i+1) % fotos.length;
-  document.getElementById("slide").src = fotos[i];
+  i=(i+1)%fotos.length;
+  slide.src=fotos[i];
 },3000);
 
-/* 🎟️ LÓGICA COMPRA */
-let cantidad = 0;
-const PRECIO = 5000;
-const TOTAL = 10000;
+let cantidad=0;
+const PRECIO=5000;
+const TOTAL=10000;
 
-function elegir(c){
-  cantidad = c;
-  mostrarOpciones();
-}
-
+function elegir(c){cantidad=c;mostrarOpciones()}
 function personalizado(){
-  const c = Number(document.getElementById("cantidad").value);
-  if(c < 10){
-    alert("Compra mínima: 10 números");
-    return;
-  }
-  cantidad = c;
-  mostrarOpciones();
+  const c=Number(cantidadInput.value);
+  if(c<10)return alert("Mínimo 10 números");
+  cantidad=c;mostrarOpciones();
 }
-
 function mostrarOpciones(){
-  document.getElementById("opciones").style.display="block";
-  document.getElementById("opciones").scrollIntoView({behavior:"smooth"});
+  opciones.style.display="block";
+  opciones.scrollIntoView({behavior:"smooth"});
 }
 
-// 🎲 AL AZAR RESPETANDO RESERVADOS
+// 🎲 AL AZAR RESPETANDO BLOQUEADOS
 async function azar(){
-  const bloqueados = [];
+  const bloqueados=new Set();
 
-  const q = query(
+  const q=query(
     collection(db,"compras"),
     where("estado","in",["pendiente","confirmado"])
   );
-  const snap = await getDocs(q);
+  const snap=await getDocs(q);
 
   snap.forEach(d=>{
-    const c = d.data();
+    const c=d.data();
     if(Array.isArray(c.numeros)){
-      bloqueados.push(...c.numeros);
+      c.numeros.forEach(n=>bloqueados.add(n));
     }
   });
 
-  const libres = [];
+  const libres=[];
   for(let i=0;i<TOTAL;i++){
-    const n = i.toString().padStart(4,"0");
-    if(!bloqueados.includes(n)) libres.push(n);
+    const n=i.toString().padStart(4,"0");
+    if(!bloqueados.has(n)) libres.push(n);
   }
 
-  if(libres.length < cantidad){
+  if(libres.length<cantidad){
     alert("❌ No hay suficientes números disponibles");
     return;
   }
 
-  const numeros = [];
-  while(numeros.length < cantidad){
-    const r = libres[Math.floor(Math.random()*libres.length)];
-    if(!numeros.includes(r)) numeros.push(r);
+  const seleccion=[];
+  while(seleccion.length<cantidad){
+    const r=libres[Math.floor(Math.random()*libres.length)];
+    if(!seleccion.includes(r)) seleccion.push(r);
   }
 
-  localStorage.setItem("numeros", JSON.stringify(numeros));
-  localStorage.setItem("cantidad", cantidad);
-  localStorage.setItem("total", cantidad * PRECIO);
-  window.location.href="checkout.html";
+  localStorage.setItem("numeros",JSON.stringify(seleccion));
+  localStorage.setItem("cantidad",cantidad);
+  localStorage.setItem("total",cantidad*PRECIO);
+  location.href="checkout.html";
 }
 
 function seleccionar(){
-  localStorage.setItem("cantidad", cantidad);
-  window.location.href="seleccionar.html";
+  localStorage.setItem("cantidad",cantidad);
+  location.href="seleccionar.html";
 }
 </script>
 
