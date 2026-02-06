@@ -19,8 +19,9 @@ h2{text-align:center}
   margin-bottom:15px;
   box-shadow:0 3px 8px rgba(0,0,0,.15);
 }
-.estado-pendiente{color:#e53935;font-weight:bold}
+.estado-reservado{color:#ef6c00;font-weight:bold}
 .estado-confirmado{color:#2e7d32;font-weight:bold}
+.estado-cancelado{color:#c62828;font-weight:bold}
 .fecha{font-size:13px;color:#555;margin-bottom:6px}
 button{
   padding:10px;
@@ -47,10 +48,7 @@ import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://ww
 const firebaseConfig = {
   apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
   authDomain: "rifa-2026-1a341.firebaseapp.com",
-  projectId: "rifa-2026-1a341",
-  storageBucket: "rifa-2026-1a341.firebasestorage.app",
-  messagingSenderId: "163526935865",
-  appId: "1:163526935865:web:1c7c235bf4abb94a1514e8"
+  projectId: "rifa-2026-1a341"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -80,14 +78,13 @@ onSnapshot(collection(db,"compras"), snap=>{
 
       🎟 <b>Números:</b><br>${c.numeros.join(", ")}<br><br>
       💰 <b>Total:</b> $${c.total.toLocaleString()}<br>
-      🏦 <b>Método:</b> ${c.metodo}<br>
       📌 Estado:
       <span class="estado-${c.estado}">
         ${c.estado}
       </span><br><br>
 
       ${
-        c.estado === "pendiente"
+        c.estado === "reservado"
         ? `
           <button class="confirmar" onclick="confirmar('${d.id}')">
             Confirmar pago
@@ -96,7 +93,9 @@ onSnapshot(collection(db,"compras"), snap=>{
             Cancelar
           </button>
         `
-        : "✅ Pago confirmado"
+        : c.estado === "confirmado"
+          ? "✅ Pago confirmado"
+          : "❌ Compra cancelada"
       }
     `;
 
@@ -106,12 +105,12 @@ onSnapshot(collection(db,"compras"), snap=>{
 
 window.confirmar = async function(id){
   if(!confirm("¿Confirmar este pago?")) return;
-  await updateDoc(doc(db,"compras",id),{estado:"confirmado"});
+  await updateDoc(doc(db,"compras",id),{ estado:"confirmado" });
 };
 
 window.cancelar = async function(id){
   if(!confirm("¿Cancelar y liberar números?")) return;
-  await updateDoc(doc(db,"compras",id),{estado:"cancelado"});
+  await updateDoc(doc(db,"compras",id),{ estado:"cancelado" });
 };
 </script>
 
