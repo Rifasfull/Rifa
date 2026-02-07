@@ -28,6 +28,10 @@ button{
   cursor:pointer
 }
 button.secondary{background:#2196F3}
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
 input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 .packages{
   display:grid;
@@ -42,12 +46,11 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   border-radius:8px;
 }
 
-/* 🔥 MODAL CENTRADO */
+/* 🔥 MODAL */
 .modal{
   display:none;
   position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
+  inset:0;
   background:rgba(0,0,0,.6);
   align-items:center;
   justify-content:center;
@@ -57,10 +60,11 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   background:#fff;
   width:90%;
   max-width:360px;
-  padding:22px;
-  border-radius:14px;
+  padding:26px;
+  border-radius:16px;
   text-align:center;
 }
+
 .footer{
   background:#1f2933;
   color:#e5e7eb;
@@ -68,7 +72,6 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   padding:22px 15px;
   border-top:4px solid #4CAF50;
 }
-
 .footer-content{
   max-width:420px;
   margin:auto;
@@ -76,11 +79,6 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   font-size:13.5px;
   line-height:1.6;
 }
-
-.footer-content p{
-  margin:6px 0;
-}
-
 .footer-copy{
   margin-top:12px;
   font-size:12px;
@@ -94,43 +92,41 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 <div class="hero">
   <img id="slide" src="img/Foto1.jpg" alt="Rifa">
   <h1>🎟️ GRAN RIFA OFICIAL</h1>
-  <p>Muy pronto todo esto será tuyo, no dejes perder esta oportunidad</p>
+  <p>Una oportunidad real. Elige tus números y participa.</p>
 </div>
 
 <div class="card">
   <h2>📦 Paquetes</h2>
   <div class="packages">
-    <button onclick="elegir(10)">10 números<br>$50.000</button>
-    <button onclick="elegir(20)">20 números<br>$100.000</button>
-    <button onclick="elegir(50)">50 números<br>$250.000</button>
-    <button onclick="elegir(100)">100 números<br>$500.000</button>
-    <button onclick="elegir(150)">150 números<br>$750.000</button>
+    <button onclick="elegir(10,this)">10 números<br>$50.000</button>
+    <button onclick="elegir(20,this)">20 números<br>$100.000</button>
+    <button onclick="elegir(50,this)">50 números<br>$250.000</button>
+    <button onclick="elegir(100,this)">100 números<br>$500.000</button>
+    <button onclick="elegir(150,this)">150 números<br>$750.000</button>
   </div>
 </div>
 
 <div class="card">
   <h2>✏️ Personalizado</h2>
   <input type="number" id="cantidad" min="10" placeholder="Mínimo 10 números">
-  <button onclick="personalizado()">Continuar</button>
+  <button onclick="personalizado(this)">Continuar</button>
 </div>
 
-<!-- 🔥 MODAL OPCIONES -->
 <div class="modal" id="modalOpciones">
   <div class="modal-box">
-    <h2>🎯 ¿Cómo quieres tus números?</h2>
-    <button class="secondary" onclick="azar()">🎲 Al azar</button>
-    <button onclick="seleccionar()">✋ Seleccionar</button>
+    <h2>🎯 Elige cómo prefieres tus números</h2>
+    <button class="secondary" onclick="azar(this)">🎲 Al azar</button>
+    <button onclick="seleccionar(this)">✋ Seleccionarlos</button>
   </div>
 </div>
 
 <div class="card">
-  <h2>🔎 Buscar mis números</h2>
-  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
+  <h2>🔎 Consultar participación</h2>
+  <input type="email" id="correoBuscar" placeholder="Correo usado en la compra">
   <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
   <div id="resultado" class="resultado"></div>
 </div>
 
-<!-- 🔥 FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
@@ -144,18 +140,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.db = db;
-window.collection = collection;
-window.query = query;
-window.where = where;
-window.getDocs = getDocs;
-
 window.buscarPorCorreo = async function(){
   const correo = correoBuscar.value.trim();
-  const res = resultado;
+  resultado.innerHTML = "";
 
   if(!correo){
-    res.innerHTML = "❌ Ingresa un correo válido";
+    resultado.innerHTML = "Ingresa un correo válido";
     return;
   }
 
@@ -163,112 +153,78 @@ window.buscarPorCorreo = async function(){
   const snap = await getDocs(q);
 
   if(snap.empty){
-    res.innerHTML = "❌ No se encontraron compras";
+    resultado.innerHTML = "No hay registros asociados a este correo";
     return;
   }
 
-  let html = "";
+  let html="";
   snap.forEach(d=>{
-    const c = d.data();
-    html += `
-      🎟 ${c.numeros.join(", ")}<br>
-      💰 $${c.total.toLocaleString()}<br>
-      📌 ${c.estado}<hr>
-    `;
+    const c=d.data();
+    html+=`🎟 ${c.numeros.join(", ")}<br>📌 ${c.estado}<hr>`;
   });
-
-  res.innerHTML = html;
+  resultado.innerHTML=html;
 };
 </script>
 
 <script>
 const fotos=["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
 let i=0;
-setInterval(()=>{
-  i=(i+1)%fotos.length;
-  slide.src=fotos[i];
-},3000);
+setInterval(()=>slide.src=fotos[i++%fotos.length],3000);
 
 let cantidad=0;
 const PRECIO=5000;
 const TOTAL=10000;
 
-function elegir(c){
+function bloquear(btn){
+  btn.disabled=true;
+  btn.innerText="Procesando…";
+}
+
+function elegir(c,btn){
+  bloquear(btn);
   cantidad=c;
   abrirModal();
 }
 
-function personalizado(){
-  const c = Number(document.getElementById("cantidad").value);
-  if(c < 10){
-    alert("Mínimo 10 números");
-    return;
-  }
+function personalizado(btn){
+  const c=+cantidadInput.value;
+  if(c<10){alert("Mínimo 10 números");return;}
+  bloquear(btn);
   cantidad=c;
   abrirModal();
 }
 
 function abrirModal(){
-  document.getElementById("modalOpciones").style.display="flex";
+  modalOpciones.style.display="flex";
 }
+
 function cerrarModal(){
-  document.getElementById("modalOpciones").style.display="none";
+  modalOpciones.style.display="none";
 }
 
-// 🎲 AL AZAR
-async function azar(){
+async function azar(btn){
+  bloquear(btn);
   cerrarModal();
-
-  const bloqueados=new Set();
-  const q=query(collection(db,"compras"),where("estado","in",["pendiente","confirmado"]));
-  const snap=await getDocs(q);
-
-  snap.forEach(d=>{
-    const c=d.data();
-    if(Array.isArray(c.numeros)) c.numeros.forEach(n=>bloqueados.add(n));
-  });
-
-  const libres=[];
-  for(let i=0;i<TOTAL;i++){
-    const n=i.toString().padStart(4,"0");
-    if(!bloqueados.has(n)) libres.push(n);
-  }
-
-  if(libres.length<cantidad){
-    alert("❌ No hay suficientes números disponibles");
-    return;
-  }
-
-  const seleccion=[];
-  while(seleccion.length<cantidad){
-    const r=libres[Math.floor(Math.random()*libres.length)];
-    if(!seleccion.includes(r)) seleccion.push(r);
-  }
-
-  localStorage.setItem("numeros",JSON.stringify(seleccion));
   localStorage.setItem("cantidad",cantidad);
   localStorage.setItem("total",cantidad*PRECIO);
   location.href="checkout.html";
 }
 
-function seleccionar(){
+function seleccionar(btn){
+  bloquear(btn);
   cerrarModal();
   localStorage.setItem("cantidad",cantidad);
   location.href="seleccionar.html";
 }
 </script>
+
 <footer class="footer">
   <div class="footer-content">
     <p>🎟️ <b>Rifa privada</b></p>
-    <p>
-      🔒 Los números se reservan temporalmente y se asignan por orden de confirmación del pago.<br>
-      ⏳ La validación del pago es <b>manual</b>.<br>
-      📧 La confirmación se envía por <b>correo electrónico y WhatsApp</b>.
-    </p>
-    <p class="footer-copy">
-      © 2026 · Todos los derechos reservados
-    </p>
+    <p>Los números se asignan por orden de validación.</p>
+    <p class="footer-copy">© 2026 · Todos los derechos reservados</p>
   </div>
 </footer>
+
 </body>
 </html>
