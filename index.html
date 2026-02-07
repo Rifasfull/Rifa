@@ -28,10 +28,6 @@ button{
   cursor:pointer
 }
 button.secondary{background:#2196F3}
-button:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
 input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 .packages{
   display:grid;
@@ -60,9 +56,28 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   background:#fff;
   width:90%;
   max-width:360px;
-  padding:22px;
+  padding:26px 22px 22px;
   border-radius:14px;
   text-align:center;
+  position:relative;
+}
+
+/* ❌ cerrar modal */
+.cerrar-modal{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#f3f4f6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:bold;
+  color:#111;
+  cursor:pointer;
 }
 
 .footer{
@@ -99,25 +114,26 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 <div class="card">
   <h2>📦 Paquetes</h2>
   <div class="packages">
-    <button onclick="elegir(10,this)">10 números<br>$50.000</button>
-    <button onclick="elegir(20,this)">20 números<br>$100.000</button>
-    <button onclick="elegir(50,this)">50 números<br>$250.000</button>
-    <button onclick="elegir(100,this)">100 números<br>$500.000</button>
-    <button onclick="elegir(150,this)">150 números<br>$750.000</button>
+    <button onclick="elegir(10)">10 números<br>$50.000</button>
+    <button onclick="elegir(20)">20 números<br>$100.000</button>
+    <button onclick="elegir(50)">50 números<br>$250.000</button>
+    <button onclick="elegir(100)">100 números<br>$500.000</button>
+    <button onclick="elegir(150)">150 números<br>$750.000</button>
   </div>
 </div>
 
 <div class="card">
   <h2>✏️ Personalizado</h2>
   <input type="number" id="cantidad" min="10" placeholder="Mínimo 10 números">
-  <button onclick="personalizado(this)">Continuar</button>
+  <button onclick="personalizado()">Continuar</button>
 </div>
 
 <div class="modal" id="modalOpciones">
   <div class="modal-box">
+    <div class="cerrar-modal" onclick="cerrarModal()">✕</div>
     <h2>🎯 ¿Cómo quieres tus números?</h2>
-    <button class="secondary" onclick="azar(this)">🎲 Al azar</button>
-    <button onclick="seleccionar(this)">✋ Seleccionar</button>
+    <button class="secondary" onclick="azar()">🎲 Al azar</button>
+    <button onclick="seleccionar()">✋ Seleccionar</button>
   </div>
 </div>
 
@@ -136,35 +152,34 @@ setInterval(()=>{slide.src=fotos[i++%fotos.length]},3000);
 let cantidad=0;
 const PRECIO=5000;
 
-function bloquear(btn){
-  btn.disabled=true;
-}
-
-function elegir(c,btn){
-  bloquear(btn);
+function elegir(c){
   cantidad=c;
   modalOpciones.style.display="flex";
 }
 
-function personalizado(btn){
+function personalizado(){
   const c=Number(document.getElementById("cantidad").value);
-  if(c<10){alert("Mínimo 10 números");return;}
-  bloquear(btn);
+  if(c<10){
+    alert("Mínimo 10 números");
+    return;
+  }
   cantidad=c;
   modalOpciones.style.display="flex";
 }
 
-function azar(btn){
-  bloquear(btn);
+function cerrarModal(){
   modalOpciones.style.display="none";
+}
+
+function azar(){
+  cerrarModal();
   localStorage.setItem("cantidad",cantidad);
   localStorage.setItem("total",cantidad*PRECIO);
   location.href="checkout.html";
 }
 
-function seleccionar(btn){
-  bloquear(btn);
-  modalOpciones.style.display="none";
+function seleccionar(){
+  cerrarModal();
   localStorage.setItem("cantidad",cantidad);
   location.href="seleccionar.html";
 }
