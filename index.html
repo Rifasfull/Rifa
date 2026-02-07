@@ -46,7 +46,7 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   border-radius:8px;
 }
 
-/* 🔥 MODAL */
+/* MODAL */
 .modal{
   display:none;
   position:fixed;
@@ -60,8 +60,8 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   background:#fff;
   width:90%;
   max-width:360px;
-  padding:26px;
-  border-radius:16px;
+  padding:22px;
+  border-radius:14px;
   text-align:center;
 }
 
@@ -79,6 +79,7 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   font-size:13.5px;
   line-height:1.6;
 }
+.footer-content p{margin:6px 0}
 .footer-copy{
   margin-top:12px;
   font-size:12px;
@@ -92,7 +93,7 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 <div class="hero">
   <img id="slide" src="img/Foto1.jpg" alt="Rifa">
   <h1>🎟️ GRAN RIFA OFICIAL</h1>
-  <p>Una oportunidad real. Elige tus números y participa.</p>
+  <p>Muy pronto todo esto será tuyo, no dejes perder esta oportunidad</p>
 </div>
 
 <div class="card">
@@ -114,97 +115,48 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 
 <div class="modal" id="modalOpciones">
   <div class="modal-box">
-    <h2>🎯 Elige cómo prefieres tus números</h2>
+    <h2>🎯 ¿Cómo quieres tus números?</h2>
     <button class="secondary" onclick="azar(this)">🎲 Al azar</button>
-    <button onclick="seleccionar(this)">✋ Seleccionarlos</button>
+    <button onclick="seleccionar(this)">✋ Seleccionar</button>
   </div>
 </div>
 
 <div class="card">
-  <h2>🔎 Consultar participación</h2>
-  <input type="email" id="correoBuscar" placeholder="Correo usado en la compra">
+  <h2>🔎 Buscar mis números</h2>
+  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
   <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
   <div id="resultado" class="resultado"></div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
-  authDomain: "rifa-2026-1a341.firebaseapp.com",
-  projectId: "rifa-2026-1a341"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.buscarPorCorreo = async function(){
-  const correo = correoBuscar.value.trim();
-  resultado.innerHTML = "";
-
-  if(!correo){
-    resultado.innerHTML = "Ingresa un correo válido";
-    return;
-  }
-
-  const q = query(collection(db,"compras"), where("correo","==",correo));
-  const snap = await getDocs(q);
-
-  if(snap.empty){
-    resultado.innerHTML = "No hay registros asociados a este correo";
-    return;
-  }
-
-  let html="";
-  snap.forEach(d=>{
-    const c=d.data();
-    html+=`🎟 ${c.numeros.join(", ")}<br>📌 ${c.estado}<hr>`;
-  });
-  resultado.innerHTML=html;
-};
-</script>
-
 <script>
 const fotos=["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
 let i=0;
-setInterval(()=>slide.src=fotos[i++%fotos.length],3000);
+setInterval(()=>{slide.src=fotos[i++%fotos.length]},3000);
 
 let cantidad=0;
 const PRECIO=5000;
-const TOTAL=10000;
 
 function bloquear(btn){
   btn.disabled=true;
-  btn.innerText="Procesando…";
 }
 
 function elegir(c,btn){
   bloquear(btn);
   cantidad=c;
-  abrirModal();
-}
-
-function personalizado(btn){
-  const c=+cantidadInput.value;
-  if(c<10){alert("Mínimo 10 números");return;}
-  bloquear(btn);
-  cantidad=c;
-  abrirModal();
-}
-
-function abrirModal(){
   modalOpciones.style.display="flex";
 }
 
-function cerrarModal(){
-  modalOpciones.style.display="none";
+function personalizado(btn){
+  const c=Number(document.getElementById("cantidad").value);
+  if(c<10){alert("Mínimo 10 números");return;}
+  bloquear(btn);
+  cantidad=c;
+  modalOpciones.style.display="flex";
 }
 
-async function azar(btn){
+function azar(btn){
   bloquear(btn);
-  cerrarModal();
+  modalOpciones.style.display="none";
   localStorage.setItem("cantidad",cantidad);
   localStorage.setItem("total",cantidad*PRECIO);
   location.href="checkout.html";
@@ -212,7 +164,7 @@ async function azar(btn){
 
 function seleccionar(btn){
   bloquear(btn);
-  cerrarModal();
+  modalOpciones.style.display="none";
   localStorage.setItem("cantidad",cantidad);
   location.href="seleccionar.html";
 }
@@ -221,8 +173,14 @@ function seleccionar(btn){
 <footer class="footer">
   <div class="footer-content">
     <p>🎟️ <b>Rifa privada</b></p>
-    <p>Los números se asignan por orden de validación.</p>
-    <p class="footer-copy">© 2026 · Todos los derechos reservados</p>
+    <p>
+      🔒 Los números se reservan temporalmente y se asignan por orden de confirmación del pago.<br>
+      ⏳ La validación del pago es <b>manual</b>.<br>
+      📧 La confirmación se envía por <b>correo electrónico y WhatsApp</b>.
+    </p>
+    <p class="footer-copy">
+      © 2026 · Todos los derechos reservados
+    </p>
   </div>
 </footer>
 
