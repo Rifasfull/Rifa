@@ -145,12 +145,25 @@ let cantidad=0;
 const PRECIO=5000;
 const TOTAL=10000;
 
-function elegir(c){cantidad=c;mostrarOpciones()}
-function personalizado(){
-  const c=Number(cantidadInput.value);
-  if(c<10)return alert("Mínimo 10 números");
-  cantidad=c;mostrarOpciones();
+function elegir(c){
+  cantidad=c;
+  mostrarOpciones();
 }
+
+/* ✅ AQUÍ ESTÁ LA ÚNICA CORRECCIÓN */
+function personalizado(){
+  const input = document.getElementById("cantidad");
+  const c = Number(input.value);
+
+  if(c < 10){
+    alert("Mínimo 10 números");
+    return;
+  }
+
+  cantidad = c;
+  mostrarOpciones();
+}
+
 function mostrarOpciones(){
   opciones.style.display="block";
   opciones.scrollIntoView({behavior:"smooth"});
