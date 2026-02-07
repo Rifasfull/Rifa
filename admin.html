@@ -21,16 +21,13 @@ h2{text-align:center}
 .tab{
   flex:1;
   padding:10px;
-  text-align:center;
+  border:none;
   border-radius:8px;
-  background:#ddd;
-  cursor:pointer;
   font-weight:bold;
+  cursor:pointer;
+  background:#ddd;
 }
-.tab.active{
-  background:#4CAF50;
-  color:white;
-}
+.tab.active{background:#4CAF50;color:#fff}
 
 .card{
   background:#fff;
@@ -39,11 +36,9 @@ h2{text-align:center}
   margin-bottom:15px;
   box-shadow:0 3px 8px rgba(0,0,0,.15);
 }
-
-.estado-reservado{color:#ef6c00;font-weight:bold}
+.estado-reservado{color:#e53935;font-weight:bold}
 .estado-confirmado{color:#2e7d32;font-weight:bold}
-.estado-cancelado{color:#c62828;font-weight:bold}
-
+.estado-cancelado{color:#555;font-weight:bold}
 .fecha{font-size:13px;color:#555;margin-bottom:6px}
 
 button{
@@ -64,9 +59,9 @@ button{
 <h2>📋 Panel de administración</h2>
 
 <div class="tabs">
-  <div class="tab active" onclick="mostrar('reservado')">⏳ Reservados</div>
-  <div class="tab" onclick="mostrar('confirmado')">✅ Confirmados</div>
-  <div class="tab" onclick="mostrar('cancelado')">❌ Cancelados</div>
+  <button class="tab active" onclick="cambiarTab('reservado')">⏳ Pendientes</button>
+  <button class="tab" onclick="cambiarTab('confirmado')">✅ Confirmados</button>
+  <button class="tab" onclick="cambiarTab('cancelado')">🗂 Historial</button>
 </div>
 
 <div id="lista"></div>
@@ -85,30 +80,26 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const contenedor = document.getElementById("lista");
-let estadoActual = "reservado";
-
-window.mostrar = function(estado){
-  estadoActual = estado;
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  event.target.classList.add("active");
-  render();
-};
-
+let tabActual = "reservado";
 let compras = [];
 
 onSnapshot(collection(db,"compras"), snap=>{
-  compras = [];
-  snap.forEach(d=>{
-    compras.push({ id:d.id, ...d.data() });
-  });
+  compras = snap.docs.map(d=>({id:d.id, ...d.data()}));
   render();
 });
+
+window.cambiarTab = function(tab){
+  tabActual = tab;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+  event.target.classList.add("active");
+  render();
+}
 
 function render(){
   contenedor.innerHTML = "";
 
   compras
-    .filter(c=>c.estado===estadoActual)
+    .filter(c=>c.estado === tabActual)
     .forEach(c=>{
       const fecha = c.fecha ? c.fecha.toDate().toLocaleString() : "Sin fecha";
 
@@ -130,12 +121,8 @@ function render(){
         ${
           c.estado === "reservado"
           ? `
-            <button class="confirmar" onclick="confirmar('${c.id}')">
-              Confirmar pago
-            </button>
-            <button class="cancelar" onclick="cancelar('${c.id}')">
-              Cancelar
-            </button>
+            <button class="confirmar" onclick="confirmar('${c.id}')">Confirmar</button>
+            <button class="cancelar" onclick="cancelar('${c.id}')">Cancelar</button>
           `
           : ""
         }
@@ -147,12 +134,12 @@ function render(){
 
 window.confirmar = async function(id){
   if(!confirm("¿Confirmar este pago?")) return;
-  await updateDoc(doc(db,"compras",id),{ estado:"confirmado" });
+  await updateDoc(doc(db,"compras",id),{estado:"confirmado"});
 };
 
 window.cancelar = async function(id){
-  if(!confirm("¿Cancelar esta compra?")) return;
-  await updateDoc(doc(db,"compras",id),{ estado:"cancelado" });
+  if(!confirm("¿Cancelar y mover al historial?")) return;
+  await updateDoc(doc(db,"compras",id),{estado:"cancelado"});
 };
 </script>
 
