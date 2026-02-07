@@ -21,6 +21,31 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;fon
 .disabled{background:#aaa;color:#555}
 input{width:100%;padding:10px;margin-top:8px}
 .loader{text-align:center;padding:20px;color:#777}
+.footer{
+  background:#1f2933;
+  color:#e5e7eb;
+  margin-top:30px;
+  padding:22px 15px;
+  border-top:4px solid #4CAF50;
+}
+
+.footer-content{
+  max-width:420px;
+  margin:auto;
+  text-align:center;
+  font-size:13.5px;
+  line-height:1.6;
+}
+
+.footer-content p{
+  margin:6px 0;
+}
+
+.footer-copy{
+  margin-top:12px;
+  font-size:12px;
+  color:#9ca3af;
+}
 </style>
 </head>
 
@@ -170,6 +195,18 @@ window.irCheckout=function(){
 
 cargarNumeros();
 </script>
-
+<footer class="footer">
+  <div class="footer-content">
+    <p>🎟️ <b>Rifa privada</b></p>
+    <p>
+      🔒 Los números se reservan temporalmente y se asignan por orden de confirmación del pago.<br>
+      ⏳ La validación del pago es <b>manual</b>.<br>
+      📧 La confirmación se envía por <b>correo electrónico y WhatsApp</b>.
+    </p>
+    <p class="footer-copy">
+      © 2026 · Todos los derechos reservados
+    </p>
+  </div>
+</footer>
 </body>
 </html>
