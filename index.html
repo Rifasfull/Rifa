@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎟️ Super Rifa de una Xtz 150 y una eco deluxe 0k</title>
+<title>🎟️ Super Rifa</title>
 
 <style>
 body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
 h1,h2{text-align:center}
+
 .hero,.card{
   background:#fff;
   padding:16px;
@@ -16,40 +17,57 @@ h1,h2{text-align:center}
   box-shadow:0 4px 10px rgba(0,0,0,.08)
 }
 .hero img{width:100%;border-radius:12px;margin-bottom:10px}
+
 button{
   width:100%;
-  padding:12px;
+  padding:14px;
   margin-top:10px;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   background:#4CAF50;
   color:white;
-  font-size:16px;
+  font-size:17px;
   cursor:pointer
 }
 button.secondary{background:#2196F3}
+
 input{width:100%;padding:10px;margin-top:6px;font-size:15px}
+
 .packages{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
   gap:10px
 }
-.resultado{
-  margin-top:10px;
-  font-size:14px;
-  background:#f7f7f7;
-  padding:10px;
-  border-radius:8px;
+
+/* 🔥 MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,.6);
+  align-items:center;
+  justify-content:center;
+  z-index:999;
 }
+.modal-box{
+  background:#fff;
+  width:90%;
+  max-width:360px;
+  padding:25px;
+  border-radius:14px;
+  text-align:center;
+}
+.modal-box h2{margin-bottom:15px}
 </style>
 </head>
 
 <body>
 
 <div class="hero">
-  <img id="slide" src="img/Foto1.jpg" alt="Rifa">
-  <h1>🎟️ GRAN RIFA OFICIAL DE UNA XTZ 150 Y UNA ECO DELUXE 0km</h1>
-  <p>Muy pronto todo esto será tuyo, no dejes perder esta oportunidad</p>
+  <img id="slide" src="img/Foto1.jpg">
+  <h1>🎟️ GRAN RIFA OFICIAL</h1>
+  <p>Muy pronto todo esto será tuyo</p>
 </div>
 
 <div class="card">
@@ -69,20 +87,15 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   <button onclick="personalizado()">Continuar</button>
 </div>
 
-<div class="card" id="opciones" style="display:none">
-  <h2>¿Cómo quieres tus números?</h2>
-  <button class="secondary" onclick="azar()">🎲 Al azar</button>
-  <button onclick="seleccionar()">✋ Seleccionar</button>
+<!-- 🔥 MODAL OPCIONES -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>🎯 ¿Cómo quieres tus números?</h2>
+    <button class="secondary" onclick="azar()">🎲 Al azar</button>
+    <button onclick="seleccionar()">✋ Seleccionar</button>
+  </div>
 </div>
 
-<div class="card">
-  <h2>🔎 Buscar mis números</h2>
-  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
-  <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
-  <div id="resultado" class="resultado"></div>
-</div>
-
-<!-- 🔥 FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
@@ -96,94 +109,48 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.db = db;
-window.collection = collection;
-window.query = query;
-window.where = where;
-window.getDocs = getDocs;
-
-window.buscarPorCorreo = async function(){
-  const correo = correoBuscar.value.trim();
-  const res = resultado;
-
-  if(!correo){
-    res.innerHTML = "❌ Ingresa un correo válido";
-    return;
-  }
-
-  const q = query(collection(db,"compras"), where("correo","==",correo));
-  const snap = await getDocs(q);
-
-  if(snap.empty){
-    res.innerHTML = "❌ No se encontraron compras";
-    return;
-  }
-
-  let html = "";
-  snap.forEach(d=>{
-    const c = d.data();
-    html += `
-      🎟 ${c.numeros.join(", ")}<br>
-      💰 $${c.total.toLocaleString()}<br>
-      📌 ${c.estado}<hr>
-    `;
-  });
-
-  res.innerHTML = html;
-};
+window.db=db;
+window.collection=collection;
+window.query=query;
+window.where=where;
+window.getDocs=getDocs;
 </script>
 
 <script>
-const fotos=["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
-let i=0;
-setInterval(()=>{
-  i=(i+1)%fotos.length;
-  slide.src=fotos[i];
-},3000);
-
 let cantidad=0;
 const PRECIO=5000;
 const TOTAL=10000;
 
 function elegir(c){
   cantidad=c;
-  mostrarOpciones();
+  abrirModal();
 }
 
-/* ✅ AQUÍ ESTÁ LA ÚNICA CORRECCIÓN */
 function personalizado(){
-  const input = document.getElementById("cantidad");
-  const c = Number(input.value);
-
-  if(c < 10){
-    alert("Mínimo 10 números");
-    return;
-  }
-
-  cantidad = c;
-  mostrarOpciones();
+  const c = Number(document.getElementById("cantidad").value);
+  if(c<10){ alert("Mínimo 10 números"); return; }
+  cantidad=c;
+  abrirModal();
 }
 
-function mostrarOpciones(){
-  opciones.style.display="block";
-  opciones.scrollIntoView({behavior:"smooth"});
+function abrirModal(){
+  document.getElementById("modal").style.display="flex";
 }
 
-// 🎲 AL AZAR RESPETANDO BLOQUEADOS
+function cerrarModal(){
+  document.getElementById("modal").style.display="none";
+}
+
 async function azar(){
-  const bloqueados=new Set();
+  cerrarModal();
 
-  const q=query(
-    collection(db,"compras"),
-    where("estado","in",["pendiente","confirmado"])
-  );
+  const bloqueados=new Set();
+  const q=query(collection(db,"compras"),where("estado","in",["pendiente","confirmado"]));
   const snap=await getDocs(q);
 
   snap.forEach(d=>{
     const c=d.data();
-    if(Array.isArray(c.numeros)){
-      c.numeros.forEach(n=>bloqueados.add(n));
-    }
+    if(Array.isArray(c.numeros)) c.numeros.forEach(n=>bloqueados.add(n));
   });
 
   const libres=[];
@@ -193,23 +160,24 @@ async function azar(){
   }
 
   if(libres.length<cantidad){
-    alert("❌ No hay suficientes números disponibles");
+    alert("No hay suficientes números");
     return;
   }
 
-  const seleccion=[];
-  while(seleccion.length<cantidad){
+  const sel=[];
+  while(sel.length<cantidad){
     const r=libres[Math.floor(Math.random()*libres.length)];
-    if(!seleccion.includes(r)) seleccion.push(r);
+    if(!sel.includes(r)) sel.push(r);
   }
 
-  localStorage.setItem("numeros",JSON.stringify(seleccion));
+  localStorage.setItem("numeros",JSON.stringify(sel));
   localStorage.setItem("cantidad",cantidad);
   localStorage.setItem("total",cantidad*PRECIO);
   location.href="checkout.html";
 }
 
 function seleccionar(){
+  cerrarModal();
   localStorage.setItem("cantidad",cantidad);
   location.href="seleccionar.html";
 }
