@@ -164,42 +164,47 @@ input{
 
 <div class="card">
   <h2>📦 Paquetes</h2>
-  <div class="packages">
-
-    <button onclick="elegir(10)">
-      <span class="cantidad">10 números</span>
-      <span class="precio">$50.000</span>
-    </button>
-
-    <button onclick="elegir(20)">
-      <span class="cantidad">20 números</span>
-      <span class="precio">$100.000</span>
-    </button>
-
-    <button onclick="elegir(50)">
-      <span class="cantidad">50 números</span>
-      <span class="precio">$250.000</span>
-    </button>
-
-    <button onclick="elegir(100)">
-      <span class="cantidad">100 números</span>
-      <span class="precio">$500.000</span>
-    </button>
-
-    <button onclick="elegir(150)">
-      <span class="cantidad">150 números</span>
-      <span class="precio">$750.000</span>
-    </button>
-
-    <!-- NUEVO PAQUETE -->
-    <button onclick="elegir(200)">
-      <span class="cantidad">200 números</span>
-      <span class="precio">$1.000.000</span>
-    </button>
-
   </div>
-</div>
+<div class="packages">
 
+  <button onclick="elegir(10)" class="basic">
+    <span class="nivel">BRONCE</span>
+    <span class="cantidad">10 boletos</span>
+    <span class="precio">$50.000</span>
+  </button>
+
+  <button onclick="elegir(20)" class="silver">
+    <span class="nivel">PLATA</span>
+    <span class="cantidad">20 boletos</span>
+    <span class="precio">$100.000</span>
+  </button>
+
+  <button onclick="elegir(50)" class="gold">
+    <span class="nivel">ORO</span>
+    <span class="cantidad">50 boletos</span>
+    <span class="precio">$250.000</span>
+  </button>
+
+  <button onclick="elegir(100)" class="platinum">
+    <span class="nivel">PLATINO</span>
+    <span class="cantidad">100 boletos</span>
+    <span class="precio">$500.000</span>
+  </button>
+
+  <button onclick="elegir(150)" class="diamond">
+    <span class="nivel">DIAMANTE</span>
+    <span class="cantidad">150 boletos</span>
+    <span class="precio">$750.000</span>
+  </button>
+
+  <button onclick="elegir(200)" class="vip">
+    <span class="badge">🔥 MEJOR VALOR</span>
+    <span class="nivel">BLACK EDITION</span>
+    <span class="cantidad">200 boletos</span>
+    <span class="precio">$1.000.000</span>
+  </button>
+
+</div>
 <div class="card">
   <h2>✏️ Personalizado</h2>
   <input type="number" id="cantidad" min="10" placeholder="Mínimo 10 números">
