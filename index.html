@@ -6,8 +6,15 @@
 <title>🎟️ Super Rifa de una Xtz 150 y una eco deluxe 0k</title>
 
 <style>
-body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
+body{
+  font-family:Arial,sans-serif;
+  background:#f2f2f2;
+  margin:0;
+  padding:15px
+}
+
 h1,h2{text-align:center}
+
 .hero,.card{
   background:#fff;
   padding:16px;
@@ -15,7 +22,14 @@ h1,h2{text-align:center}
   margin-bottom:16px;
   box-shadow:0 4px 10px rgba(0,0,0,.08)
 }
-.hero img{width:100%;border-radius:12px;margin-bottom:10px}
+
+.hero img{
+  width:100%;
+  border-radius:12px;
+  margin-bottom:10px
+}
+
+/* BOTONES GENERALES */
 button{
   width:100%;
   padding:12px;
@@ -27,19 +41,52 @@ button{
   font-size:16px;
   cursor:pointer
 }
+
 button.secondary{background:#2196F3}
-input{width:100%;padding:10px;margin-top:6px;font-size:15px}
+
+input{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  font-size:15px
+}
+
+/* PAQUETES PREMIUM */
 .packages{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:10px
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:14px;
 }
-.resultado{
-  margin-top:10px;
-  font-size:14px;
-  background:#f7f7f7;
-  padding:10px;
-  border-radius:8px;
+
+.packages button{
+  background: linear-gradient(145deg,#ffffff,#f0f0f0);
+  border: 1px solid #e5e7eb;
+  border-radius:16px;
+  padding:18px 12px;
+  cursor:pointer;
+  transition: all .25s ease;
+  box-shadow: 0 6px 15px rgba(0,0,0,.06);
+  color:#111827;
+}
+
+.packages button:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 12px 22px rgba(0,0,0,.12);
+  border:1px solid #4CAF50;
+}
+
+.packages button .cantidad{
+  display:block;
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.packages button .precio{
+  display:block;
+  font-size:15px;
+  font-weight:600;
+  color:#4CAF50;
 }
 
 /* MODAL */
@@ -52,6 +99,7 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   justify-content:center;
   z-index:999;
 }
+
 .modal-box{
   background:#fff;
   width:90%;
@@ -62,7 +110,6 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   position:relative;
 }
 
-/* ❌ cerrar modal */
 .cerrar-modal{
   position:absolute;
   top:10px;
@@ -80,6 +127,7 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   cursor:pointer;
 }
 
+/* FOOTER */
 .footer{
   background:#1f2933;
   color:#e5e7eb;
@@ -87,6 +135,7 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   padding:22px 15px;
   border-top:4px solid #4CAF50;
 }
+
 .footer-content{
   max-width:420px;
   margin:auto;
@@ -94,7 +143,9 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
   font-size:13.5px;
   line-height:1.6;
 }
+
 .footer-content p{margin:6px 0}
+
 .footer-copy{
   margin-top:12px;
   font-size:12px;
@@ -114,11 +165,38 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 <div class="card">
   <h2>📦 Paquetes</h2>
   <div class="packages">
-    <button onclick="elegir(10)">10 números<br>$50.000</button>
-    <button onclick="elegir(20)">20 números<br>$100.000</button>
-    <button onclick="elegir(50)">50 números<br>$250.000</button>
-    <button onclick="elegir(100)">100 números<br>$500.000</button>
-    <button onclick="elegir(150)">150 números<br>$750.000</button>
+
+    <button onclick="elegir(10)">
+      <span class="cantidad">10 números</span>
+      <span class="precio">$50.000</span>
+    </button>
+
+    <button onclick="elegir(20)">
+      <span class="cantidad">20 números</span>
+      <span class="precio">$100.000</span>
+    </button>
+
+    <button onclick="elegir(50)">
+      <span class="cantidad">50 números</span>
+      <span class="precio">$250.000</span>
+    </button>
+
+    <button onclick="elegir(100)">
+      <span class="cantidad">100 números</span>
+      <span class="precio">$500.000</span>
+    </button>
+
+    <button onclick="elegir(150)">
+      <span class="cantidad">150 números</span>
+      <span class="precio">$750.000</span>
+    </button>
+
+    <!-- NUEVO PAQUETE -->
+    <button onclick="elegir(200)">
+      <span class="cantidad">200 números</span>
+      <span class="precio">$1.000.000</span>
+    </button>
+
   </div>
 </div>
 
