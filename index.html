@@ -310,16 +310,31 @@ function cerrarModal(){
 
 function azar(){
   cerrarModal();
-  localStorage.setItem("cantidad",cantidad);
-  localStorage.setItem("total",cantidad*PRECIO);
+
+  // Limpiar datos anteriores
+  localStorage.removeItem("cantidad");
+  localStorage.removeItem("total");
+
+  // Guardar nuevos datos
+  localStorage.setItem("cantidad", String(cantidad));
+  localStorage.setItem("total", String(cantidad * PRECIO));
+
   location.href="checkout.html";
 }
 
 function seleccionar(){
   cerrarModal();
-  localStorage.setItem("cantidad",cantidad);
+
+  // Limpiar datos anteriores
+  localStorage.removeItem("cantidad");
+
+  // Guardar nueva cantidad
+  localStorage.setItem("cantidad", String(cantidad));
+
   location.href="seleccionar.html";
 }
+
+
 
 function actualizarBarra(vendidos){
   const total=10000;
