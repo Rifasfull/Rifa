@@ -248,7 +248,6 @@ input{
   <button onclick="personalizado()">Continuar</button>
 </div>
 
-<!-- 🔥 AQUÍ ESTABA EL PROBLEMA (EL MODAL FALTABA) -->
 <div class="modal" id="modalOpciones">
   <div class="modal-box">
     <div class="cerrar-modal" onclick="cerrarModal()">✕</div>
@@ -308,16 +307,17 @@ function cerrarModal(){
   document.getElementById("modalOpciones").style.display="none";
 }
 
+/* ✅ CAMBIO SEGURO AQUÍ */
 function azar(){
   cerrarModal();
 
-  // Limpiar datos anteriores
+  // Limpiar cualquier compra anterior
+  localStorage.removeItem("numeros");
   localStorage.removeItem("cantidad");
   localStorage.removeItem("total");
 
-  // Guardar nuevos datos
+  // Solo guardar la cantidad (checkout generará los números)
   localStorage.setItem("cantidad", String(cantidad));
-  localStorage.setItem("total", String(cantidad * PRECIO));
 
   location.href="checkout.html";
 }
@@ -325,16 +325,11 @@ function azar(){
 function seleccionar(){
   cerrarModal();
 
-  // Limpiar datos anteriores
-  localStorage.removeItem("cantidad");
-
-  // Guardar nueva cantidad
+  localStorage.removeItem("numeros");
   localStorage.setItem("cantidad", String(cantidad));
 
   location.href="seleccionar.html";
 }
-
-
 
 function actualizarBarra(vendidos){
   const total=10000;
