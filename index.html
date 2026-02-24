@@ -15,12 +15,12 @@ body{
 
 h1,h2{text-align:center}
 
-.hero,.card{
+.hero,.card,.progress-container{
   background:#fff;
   padding:16px;
-  border-radius:12px;
+  border-radius:14px;
   margin-bottom:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08)
+  box-shadow:0 6px 18px rgba(0,0,0,.08)
 }
 
 .hero img{
@@ -29,16 +29,7 @@ h1,h2{text-align:center}
   margin-bottom:10px
 }
 
-/* BARRA DE PROGRESO */
-.progress-container{
-  background:#fff;
-  padding:16px;
-  border-radius:12px;
-  margin-bottom:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08);
-  text-align:center;
-}
-
+/* BARRA */
 .progress-bar{
   width:100%;
   height:22px;
@@ -52,7 +43,7 @@ h1,h2{text-align:center}
   height:100%;
   width:0%;
   background:linear-gradient(90deg,#16a34a,#22c55e);
-  transition:width .5s ease;
+  transition:width .6s ease;
 }
 
 .progress-text{
@@ -67,14 +58,20 @@ button{
   padding:12px;
   margin-top:10px;
   border:none;
-  border-radius:8px;
-  background:#4CAF50;
+  border-radius:10px;
+  background:#16a34a;
   color:white;
   font-size:16px;
-  cursor:pointer
+  cursor:pointer;
+  transition:.3s;
 }
 
-button.secondary{background:#2196F3}
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 15px rgba(0,0,0,.15);
+}
+
+button.secondary{background:#2563eb}
 
 input{
   width:100%;
@@ -83,89 +80,73 @@ input{
   font-size:15px
 }
 
-/* PAQUETES */
+/* PAQUETES PREMIUM */
 .packages{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:14px;
+  gap:16px;
 }
 
 .packages button{
-  background: linear-gradient(145deg,#ffffff,#f0f0f0);
-  border: 1px solid #e5e7eb;
-  border-radius:16px;
-  padding:18px 12px;
-  cursor:pointer;
-  transition: all .25s ease;
-  box-shadow: 0 6px 15px rgba(0,0,0,.06);
+  position:relative;
+  background:linear-gradient(145deg,#ffffff,#f9fafb);
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  padding:20px 12px;
   color:#111827;
+  box-shadow:0 8px 20px rgba(0,0,0,.07);
 }
 
 .packages button:hover{
-  transform: translateY(-4px);
-  box-shadow: 0 12px 22px rgba(0,0,0,.12);
   border:1px solid #16a34a;
 }
 
-.packages button .nivel{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  letter-spacing:1px;
-  margin-bottom:4px;
-  color:#6b7280;
-}
-
-.packages button .cantidad{
-  display:block;
-  font-size:22px;
-  font-weight:700;
+.packages .cantidad{
+  font-size:24px;
+  font-weight:800;
   margin-bottom:6px;
 }
 
-.packages button .precio{
-  display:block;
+.packages .precio{
   font-size:15px;
-  font-weight:600;
+  font-weight:700;
   color:#16a34a;
 }
 
-/* MODAL */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-
-.modal-box{
-  background:#fff;
-  width:90%;
-  max-width:360px;
-  padding:26px 22px 22px;
-  border-radius:14px;
-  text-align:center;
-  position:relative;
-}
-
-.cerrar-modal{
+.badge{
   position:absolute;
-  top:10px;
-  right:10px;
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  background:#f3f4f6;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
+  top:-8px;
+  right:-8px;
+  background:#ef4444;
+  color:#fff;
+  font-size:11px;
+  padding:6px 10px;
+  border-radius:20px;
   font-weight:bold;
-  color:#111;
-  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,.2);
+}
+
+/* FOOTER */
+.footer{
+  background:#1f2933;
+  color:#e5e7eb;
+  margin-top:30px;
+  padding:22px 15px;
+  border-top:4px solid #16a34a;
+}
+
+.footer-content{
+  max-width:420px;
+  margin:auto;
+  text-align:center;
+  font-size:13.5px;
+  line-height:1.6;
+}
+
+.footer-copy{
+  margin-top:12px;
+  font-size:12px;
+  color:#9ca3af;
 }
 </style>
 </head>
@@ -178,7 +159,6 @@ input{
   <p>Compra mínima 15 números · Valor por número $5.000</p>
 </div>
 
-<!-- BARRA DE PROGRESO (luego la conectamos a Firebase) -->
 <div class="progress-container">
   <h2>📊 Progreso de la rifa</h2>
   <div class="progress-bar">
@@ -190,39 +170,36 @@ input{
 </div>
 
 <div class="card">
-  <h2>📦 Paquetes</h2>
+  <h2>📦 Paquetes Premium</h2>
 </div>
 
 <div class="packages">
 
   <button onclick="elegir(15)">
-    <span class="nivel">BRONCE</span>
-    <span class="cantidad">15 boletos</span>
-    <span class="precio">$75.000</span>
+    <div class="cantidad">15 boletos</div>
+    <div class="precio">$75.000</div>
   </button>
 
   <button onclick="elegir(30)">
-    <span class="nivel">PLATA</span>
-    <span class="cantidad">30 boletos</span>
-    <span class="precio">$150.000</span>
+    <div class="badge">MÁS VENDIDO</div>
+    <div class="cantidad">30 boletos</div>
+    <div class="precio">$150.000</div>
   </button>
 
   <button onclick="elegir(50)">
-    <span class="nivel">ORO</span>
-    <span class="cantidad">50 boletos</span>
-    <span class="precio">$250.000</span>
+    <div class="cantidad">50 boletos</div>
+    <div class="precio">$250.000</div>
   </button>
 
   <button onclick="elegir(100)">
-    <span class="nivel">PLATINO</span>
-    <span class="cantidad">100 boletos</span>
-    <span class="precio">$500.000</span>
+    <div class="cantidad">100 boletos</div>
+    <div class="precio">$500.000</div>
   </button>
 
   <button onclick="elegir(200)">
-    <span class="nivel">BLACK EDITION</span>
-    <span class="cantidad">200 boletos</span>
-    <span class="precio">$1.000.000</span>
+    <div class="badge">🔥 MEJOR VALOR</div>
+    <div class="cantidad">200 boletos</div>
+    <div class="precio">$1.000.000</div>
   </button>
 
 </div>
@@ -233,11 +210,28 @@ input{
   <button onclick="personalizado()">Continuar</button>
 </div>
 
-<script>
-const fotos=["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
-let i=0;
-setInterval(()=>{slide.src=fotos[i++%fotos.length]},3000);
+<div class="card">
+  <h2>🔎 Buscar mis números</h2>
+  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
+  <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
+  <div id="resultado"></div>
+</div>
 
+<footer class="footer">
+  <div class="footer-content">
+    <p>🎟️ <b>Rifa privada</b></p>
+    <p>
+      🔒 Los números se reservan temporalmente y se asignan por orden de confirmación del pago.<br>
+      ⏳ La validación del pago es <b>manual</b>.<br>
+      📧 La confirmación se envía por <b>correo electrónico y WhatsApp</b>.
+    </p>
+    <p class="footer-copy">
+      © 2026 · Todos los derechos reservados
+    </p>
+  </div>
+</footer>
+
+<script>
 let cantidad=0;
 const PRECIO=5000;
 
@@ -260,7 +254,6 @@ function personalizado(){
   location.href="checkout.html";
 }
 
-/* DEMO BARRA (luego la conectamos real) */
 function actualizarBarra(vendidos){
   const total=10000;
   const porcentaje=(vendidos/total)*100;
@@ -269,7 +262,6 @@ function actualizarBarra(vendidos){
     vendidos+" de 10.000 números vendidos ("+porcentaje.toFixed(1)+"%)";
 }
 
-/* EJEMPLO VISUAL */
 actualizarBarra(0);
 </script>
 
