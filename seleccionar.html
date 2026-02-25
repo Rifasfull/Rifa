@@ -28,7 +28,6 @@ input{width:100%;padding:10px;margin-top:8px}
   padding:22px 15px;
   border-top:4px solid #4CAF50;
 }
-
 .footer-content{
   max-width:420px;
   margin:auto;
@@ -36,11 +35,7 @@ input{width:100%;padding:10px;margin-top:8px}
   font-size:13.5px;
   line-height:1.6;
 }
-
-.footer-content p{
-  margin:6px 0;
-}
-
+.footer-content p{margin:6px 0;}
 .footer-copy{
   margin-top:12px;
   font-size:12px;
@@ -73,7 +68,7 @@ input{width:100%;padding:10px;margin-top:8px}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
@@ -101,30 +96,32 @@ let seleccionados = [];
 let bloqueados = [];
 let disponibles = [];
 
-async function cargarNumeros(){
-  const q = query(
-    collection(db,"compras"),
-    where("estado","in",["pendiente","confirmado"])
-  );
-  onSnapshot(collection(db,"compras"), (snapshot)=>{
-   // lógica aquí
-});
+function cargarNumeros(){
 
-  snap.forEach(d=>{
-    const c = d.data();
-    if(Array.isArray(c.numeros)){
-      bloqueados.push(...c.numeros);
+  onSnapshot(collection(db,"compras"), (snapshot)=>{
+
+    bloqueados = [];
+    disponibles = [];
+
+    snapshot.forEach(d=>{
+      const data = d.data();
+
+      if((data.estado === "reservado" || data.estado === "pagado") 
+         && Array.isArray(data.numeros)){
+        bloqueados.push(...data.numeros);
+      }
+    });
+
+    for(let i=0;i<TOTAL;i++){
+      const n = i.toString().padStart(4,"0");
+      if(!bloqueados.includes(n)){
+        disponibles.push(n);
+      }
     }
+
+    render(disponibles);
   });
 
-  for(let i=0;i<TOTAL;i++){
-    const n = i.toString().padStart(4,"0");
-    if(!bloqueados.includes(n)){
-      disponibles.push(n);
-    }
-  }
-
-  render(disponibles);
 }
 
 function render(arr){
@@ -197,6 +194,7 @@ window.irCheckout=function(){
 
 cargarNumeros();
 </script>
+
 <footer class="footer">
   <div class="footer-content">
     <p>🎟️ <b>Rifa privada</b></p>
@@ -210,5 +208,6 @@ cargarNumeros();
     </p>
   </div>
 </footer>
+
 </body>
 </html>
