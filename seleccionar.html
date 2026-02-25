@@ -106,7 +106,9 @@ async function cargarNumeros(){
     collection(db,"compras"),
     where("estado","in",["pendiente","confirmado"])
   );
-  const snap = await getDocs(q);
+  onSnapshot(collection(db,"compras"), (snapshot)=>{
+   // lógica aquí
+});
 
   snap.forEach(d=>{
     const c = d.data();
