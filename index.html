@@ -278,20 +278,35 @@ input{
   </div>
 </footer>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+/* 🔹 FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+  authDomain: "rifa-2026-1a341.firebaseapp.com",
+  projectId: "rifa-2026-1a341"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* 🔹 SLIDER */
 const fotos=["Foto1.JPG","Foto2.JPG","Foto3.JPG","Foto4.JPG"];
 let i=0;
 setInterval(()=>{slide.src=fotos[i++%fotos.length]},3000);
 
+/* 🔹 COMPRA */
 let cantidad=0;
 const PRECIO=5000;
 
-function elegir(c){
+window.elegir = function(c){
   cantidad=c;
   document.getElementById("modalOpciones").style.display="flex";
 }
 
-function personalizado(){
+window.personalizado = function(){
   const c=Number(document.getElementById("cantidad").value);
 
   if(c<15){
@@ -303,44 +318,48 @@ function personalizado(){
   document.getElementById("modalOpciones").style.display="flex";
 }
 
-function cerrarModal(){
+window.cerrarModal = function(){
   document.getElementById("modalOpciones").style.display="none";
 }
 
-/* ✅ CAMBIO SEGURO AQUÍ */
-function azar(){
+window.azar = function(){
   cerrarModal();
-
-  // Limpiar cualquier compra anterior
   localStorage.removeItem("numeros");
   localStorage.removeItem("cantidad");
   localStorage.removeItem("total");
-
-  // Solo guardar la cantidad (checkout generará los números)
   localStorage.setItem("cantidad", String(cantidad));
-
   location.href="checkout.html";
 }
 
-function seleccionar(){
+window.seleccionar = function(){
   cerrarModal();
-
   localStorage.removeItem("numeros");
   localStorage.setItem("cantidad", String(cantidad));
-
   location.href="seleccionar.html";
 }
 
-function actualizarBarra(vendidos){
-  const total=10000;
-  const porcentaje=(vendidos/total)*100;
+/* 🔥 BARRA CONECTADA A FIREBASE */
+async function actualizarBarra(){
+  const snapshot = await getDocs(collection(db,"compras"));
 
-  document.getElementById("progressFill").style.width=porcentaje+"%";
-  document.getElementById("progressText").innerText=
-    vendidos+" de 10.000 números vendidos ("+porcentaje.toFixed(1)+"%)";
+  let totalVendidos = 0;
+
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    if(data.numeros){
+      totalVendidos += data.numeros.length;
+    }
+  });
+
+  const totalGeneral = 10000;
+  const porcentaje = (totalVendidos / totalGeneral) * 100;
+
+  document.getElementById("progressFill").style.width = porcentaje + "%";
+  document.getElementById("progressText").innerText =
+    porcentaje.toFixed(1) + "% vendido";
 }
 
-actualizarBarra(0);
+actualizarBarra();
 </script>
 
 </body>
