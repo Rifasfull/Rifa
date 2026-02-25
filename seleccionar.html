@@ -81,7 +81,7 @@ const db = getFirestore(app);
 
 const TOTAL = 10000;
 const PRECIO = 5000;
-const cantidad = Number(localStorage.getItem("cantidad")) || 0;
+const cantidad = Number(localStorage.getItem("cantidadSeleccionada")) || 0;
 
 const lista = document.getElementById("lista");
 const req = document.getElementById("req");
@@ -97,7 +97,6 @@ let bloqueados = [];
 let disponibles = [];
 
 function cargarNumeros(){
-
   onSnapshot(collection(db,"compras"), (snapshot)=>{
 
     bloqueados = [];
@@ -105,7 +104,6 @@ function cargarNumeros(){
 
     snapshot.forEach(d=>{
       const data = d.data();
-
       if((data.estado === "reservado" || data.estado === "pagado") 
          && Array.isArray(data.numeros)){
         bloqueados.push(...data.numeros);
@@ -121,7 +119,6 @@ function cargarNumeros(){
 
     render(disponibles);
   });
-
 }
 
 function render(arr){
@@ -187,8 +184,6 @@ buscador.oninput=function(){
 
 window.irCheckout=function(){
   localStorage.setItem("numeros",JSON.stringify(seleccionados));
-  localStorage.setItem("cantidad",seleccionados.length);
-  localStorage.setItem("total",seleccionados.length*PRECIO);
   location.href="checkout.html";
 }
 
