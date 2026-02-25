@@ -81,7 +81,7 @@ const db = getFirestore(app);
 
 const TOTAL = 10000;
 const PRECIO = 5000;
-const cantidad = Number(localStorage.getItem("cantidad")) || 0;
+const cantidad = Number(localStorage.getItem("cantidadSeleccionada")) || 0;
 
 /* 🔥 LIMPIAR DATOS VIEJOS */
 localStorage.removeItem("numeros");
