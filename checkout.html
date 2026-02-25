@@ -200,7 +200,7 @@ const db = getFirestore(app);
 
 /* 🔥 LÓGICA SEGURA */
 let numeros = JSON.parse(localStorage.getItem("numeros"));
-let cantidad = Number(localStorage.getItem("cantidad")) || 0;
+let cantidad = Number(localStorage.setItem("cantidadSeleccionda",  cantidad); ) || 0;
 
 if(!numeros || numeros.length === 0){
   if(cantidad > 0){
