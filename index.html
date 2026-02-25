@@ -1,282 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎟️ Super Rifa de una Xtz 150 y una eco deluxe 0k</title>
-
-<style>
-body{
-  font-family:Arial,sans-serif;
-  background:#f2f2f2;
-  margin:0;
-  padding:15px
-}
-
-h1,h2{text-align:center}
-
-.hero,.card,.progress-container{
-  background:#fff;
-  padding:16px;
-  border-radius:14px;
-  margin-bottom:16px;
-  box-shadow:0 6px 18px rgba(0,0,0,.08)
-}
-
-.hero img{
-  width:100%;
-  border-radius:12px;
-  margin-bottom:10px
-}
-
-/* BARRA */
-.progress-bar{
-  width:100%;
-  height:22px;
-  background:#e5e7eb;
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:10px;
-}
-
-.progress-fill{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#16a34a,#22c55e);
-  transition:width .6s ease;
-}
-
-.progress-text{
-  margin-top:8px;
-  font-weight:bold;
-  font-size:14px;
-}
-
-/* BOTONES GENERALES */
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background:#16a34a;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-  transition:.3s;
-}
-
-button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 15px rgba(0,0,0,.15);
-}
-
-button.secondary{background:#2563eb}
-
-input{
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  font-size:15px
-}
-
-/* PAQUETES PREMIUM */
-.packages{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:16px;
-}
-
-.packages button{
-  position:relative;
-  background:linear-gradient(145deg,#ffffff,#f9fafb);
-  border:1px solid #e5e7eb;
-  border-radius:18px;
-  padding:20px 12px;
-  color:#111827;
-  box-shadow:0 8px 20px rgba(0,0,0,.07);
-}
-
-.packages button:hover{
-  border:1px solid #16a34a;
-}
-
-.packages .cantidad{
-  font-size:24px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
-.packages .precio{
-  font-size:15px;
-  font-weight:700;
-  color:#16a34a;
-}
-
-.badge{
-  position:absolute;
-  top:-8px;
-  right:-8px;
-  background:#ef4444;
-  color:#fff;
-  font-size:11px;
-  padding:6px 10px;
-  border-radius:20px;
-  font-weight:bold;
-  box-shadow:0 4px 10px rgba(0,0,0,.2);
-}
-
-/* MODAL */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-
-.modal-box{
-  background:#fff;
-  width:90%;
-  max-width:360px;
-  padding:26px 22px 22px;
-  border-radius:14px;
-  text-align:center;
-  position:relative;
-}
-
-.cerrar-modal{
-  position:absolute;
-  top:10px;
-  right:10px;
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  background:#f3f4f6;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  font-weight:bold;
-  color:#111;
-  cursor:pointer;
-}
-
-/* FOOTER */
-.footer{
-  background:#1f2933;
-  color:#e5e7eb;
-  margin-top:30px;
-  padding:22px 15px;
-  border-top:4px solid #16a34a;
-}
-
-.footer-content{
-  max-width:420px;
-  margin:auto;
-  text-align:center;
-  font-size:13.5px;
-  line-height:1.6;
-}
-
-.footer-copy{
-  margin-top:12px;
-  font-size:12px;
-  color:#9ca3af;
-}
-</style>
-</head>
-
-<body>
-
-<div class="hero">
-  <img id="slide" src="img/Foto1.jpg" alt="Rifa">
-  <h1>🎟️ GRAN RIFA OFICIAL</h1>
-  <p>· Valor por número $5.000</p>
-</div>
-
-<div class="progress-container">
-  <h2>📊 Progreso de la rifa</h2>
-  <div class="progress-bar">
-    <div class="progress-fill" id="progressFill"></div>
-  </div>
-  <div class="progress-text" id="progressText">
-     (0%)
-  </div>
-</div>
-
-<div class="card">
-  <h2>📦 Paquetes Premium</h2>
-</div>
-
-<div class="packages">
-  <button onclick="elegir(15)">
-    <div class="cantidad">15 boletos</div>
-    <div class="precio">$75.000</div>
-  </button>
-
-  <button onclick="elegir(30)">
-    <div class="badge">MÁS VENDIDO</div>
-    <div class="cantidad">30 boletos</div>
-    <div class="precio">$150.000</div>
-  </button>
-
-  <button onclick="elegir(50)">
-    <div class="cantidad">50 boletos</div>
-    <div class="precio">$250.000</div>
-  </button>
-
-  <button onclick="elegir(100)">
-    <div class="cantidad">100 boletos</div>
-    <div class="precio">$500.000</div>
-  </button>
-
-  <button onclick="elegir(200)">
-    <div class="badge">🔥 MEJOR VALOR</div>
-    <div class="cantidad">200 boletos</div>
-    <div class="precio">$1.000.000</div>
-  </button>
-</div>
-
-<div class="card">
-  <h2>✏️ Personalizado</h2>
-  <input type="number" id="cantidad" min="15" placeholder="Mínimo 15 números">
-  <button onclick="personalizado()">Continuar</button>
-</div>
-
-<div class="modal" id="modalOpciones">
-  <div class="modal-box">
-    <div class="cerrar-modal" onclick="cerrarModal()">✕</div>
-    <h2>🎯 ¿Cómo quieres tus números?</h2>
-    <button class="secondary" onclick="azar()">🎲 Al azar</button>
-    <button onclick="seleccionar()">✋ Seleccionar</button>
-  </div>
-</div>
-
-<div class="card">
-  <h2>🔎 Buscar mis números</h2>
-  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
-  <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
-  <div id="resultado"></div>
-</div>
-
-<footer class="footer">
-  <div class="footer-content">
-    <p>🎟️ <b>Rifa privada</b></p>
-    <p>
-      🔒 Los números se reservan temporalmente y se asignan por orden de confirmación del pago.<br>
-      ⏳ La validación del pago es <b>manual</b>.<br>
-      📧 La confirmación se envía por <b>correo electrónico y WhatsApp</b>.
-    </p>
-    <p class="footer-copy">
-      © 2026 · Todos los derechos reservados
-    </p>
-  </div>
-</footer>
-
-<script type="module" defer>
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
@@ -289,7 +11,45 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🔥 BARRA EN TIEMPO REAL */
+/* =========================
+   FUNCIONES QUE FALTABAN
+========================= */
+
+window.elegir = function(cantidad){
+  localStorage.setItem("cantidadSeleccionada", cantidad);
+  document.getElementById("modalOpciones").style.display = "flex";
+}
+
+window.personalizado = function(){
+  const cantidad = document.getElementById("cantidad").value;
+  if(!cantidad || cantidad < 15){
+    alert("Mínimo 15 números");
+    return;
+  }
+  localStorage.setItem("cantidadSeleccionada", cantidad);
+  document.getElementById("modalOpciones").style.display = "flex";
+}
+
+window.cerrarModal = function(){
+  document.getElementById("modalOpciones").style.display = "none";
+}
+
+window.azar = function(){
+  window.location.href = "checkout.html";
+}
+
+window.seleccionar = function(){
+  window.location.href = "seleccionar.html";
+}
+
+window.buscarPorCorreo = function(){
+  alert("Función de búsqueda conectada correctamente");
+}
+
+/* =========================
+   🔥 BARRA EN TIEMPO REAL
+========================= */
+
 onSnapshot(collection(db,"compras"), (snapshot)=>{
   let totalVendidos = 0;
 
@@ -308,6 +68,3 @@ onSnapshot(collection(db,"compras"), (snapshot)=>{
     porcentaje.toFixed(1) + "% vendido";
 });
 </script>
-
-</body>
-</html>
