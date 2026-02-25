@@ -165,8 +165,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🔥 SOLO LEER, NO GENERAR NADA */
-let numeros = JSON.parse(localStorage.getItem("numerosSeleccionados")) || [];
+/* 🔥 CORREGIDO: leer "numeros" */
+let numeros = JSON.parse(localStorage.getItem("numeros")) || [];
 
 if(numeros.length === 0){
   document.getElementById("resumen").innerHTML = `
@@ -210,7 +210,8 @@ if(numeros.length === 0){
     document.getElementById("paso1").style.display="none";
     document.getElementById("paso2").style.display="block";
 
-    localStorage.removeItem("numerosSeleccionados");
+    /* 🔥 CORREGIDO: limpiar "numeros" */
+    localStorage.removeItem("numeros");
   };
 }
 
