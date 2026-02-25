@@ -20,14 +20,12 @@ body{
   box-shadow:0 6px 20px rgba(0,0,0,.1);
 }
 h1{text-align:center;margin-bottom:15px}
-
 .resumen{
   background:#f7f7f7;
   padding:14px;
   border-radius:10px;
   margin-bottom:18px;
 }
-
 .numeros-box{
   max-height:160px;
   overflow-y:auto;
@@ -42,14 +40,12 @@ h1{text-align:center;margin-bottom:15px}
   font-size:13px;
   margin:3px;
 }
-
 .total{
   text-align:center;
   font-weight:bold;
   margin-top:12px;
   font-size:18px;
 }
-
 input{
   width:100%;
   padding:12px;
@@ -58,7 +54,6 @@ input{
   border:1px solid #ccc;
   font-size:15px;
 }
-
 button{
   width:100%;
   padding:14px;
@@ -69,7 +64,6 @@ button{
   margin-top:10px;
   cursor:pointer;
 }
-
 .continuar{
   background:#4CAF50;
   color:white;
@@ -78,7 +72,6 @@ button{
   background:#ccc;
   cursor:not-allowed;
 }
-
 .alerta{
   background:#fff3cd;
   color:#856404;
@@ -88,7 +81,6 @@ button{
   margin-bottom:15px;
   text-align:center;
 }
-
 .metodo-btn{
   background:#f1f1f1;
   padding:14px;
@@ -119,9 +111,6 @@ button{
   font-size:13.5px;
   line-height:1.6;
 }
-.footer-content p{
-  margin:6px 0;
-}
 .footer-copy{
   margin-top:12px;
   font-size:12px;
@@ -134,7 +123,6 @@ button{
 
 <div class="container">
   <h1>💳 Finalizar compra</h1>
-
   <div class="resumen" id="resumen"></div>
 
   <div id="paso1">
@@ -143,19 +131,15 @@ button{
     <input id="correo2" type="email" placeholder="Confirmar correo electrónico">
     <input id="telefono" placeholder="Teléfono (WhatsApp)">
     <input id="ciudad" placeholder="Ciudad">
-
     <button id="btnContinuar" class="continuar disabled" disabled>
       Continuar
     </button>
   </div>
 
   <div id="paso2" style="display:none">
-
     <div class="alerta">
       🔒 <b>Tus números han sido reservados</b>.<br><br>
-      Realiza la transferencia utilizando uno de los métodos disponibles.<br><br>
-      ⚠️ <b>Importante:</b> El pago es <b>verificado manualmente</b>.<br><br>
-      Una vez confirmemos tu transferencia, recibirás la confirmación
+      Realiza la transferencia y recibirás confirmación
       <b>por correo electrónico y WhatsApp</b>.
     </div>
 
@@ -165,17 +149,6 @@ button{
       Nombre: <b>Miguel Moreno</b><br>
       Referencia: <b id="refPago"></b>
     </div>
-
-    <div class="metodo-btn" onclick="toggleMetodo('daviplata')">🔵 Daviplata</div>
-    <div id="daviplata" class="metodo-info">
-      <i>Disponible próximamente</i>
-    </div>
-
-    <div class="metodo-btn" onclick="toggleMetodo('bancolombia')">🟢 Bancolombia</div>
-    <div id="bancolombia" class="metodo-info">
-      <i>Disponible próximamente</i>
-    </div>
-
   </div>
 </div>
 
@@ -192,64 +165,54 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🔥 LÓGICA CORREGIDA */
-let numeros = JSON.parse(localStorage.getItem("numeros"));
-let cantidad = Number(localStorage.getItem("cantidadSeleccionada")) || 0;
+/* 🔥 SOLO LEER, NO GENERAR NADA */
+let numeros = JSON.parse(localStorage.getItem("numerosSeleccionados")) || [];
 
-if(!numeros || numeros.length === 0){
-  if(cantidad > 0){
-    numeros = [];
-    for(let i=0;i<cantidad;i++){
-      const num = Math.floor(Math.random()*10000)
-        .toString()
-        .padStart(4,"0");
-      numeros.push(num);
-    }
-    localStorage.setItem("numeros", JSON.stringify(numeros));
-  } else {
-    numeros = [];
-  }
+if(numeros.length === 0){
+  document.getElementById("resumen").innerHTML = `
+    <b>No hay números seleccionados.</b>
+  `;
+}else{
+
+  const total = numeros.length * 5000;
+
+  document.getElementById("resumen").innerHTML = `
+    <b>🎟 Tus números</b>
+    <div class="numeros-box">
+      ${numeros.map(n=>`<span class="numero">${n}</span>`).join("")}
+    </div>
+    <div class="total">💰 Total: $${total.toLocaleString()}</div>
+  `;
+
+  const btn = document.getElementById("btnContinuar");
+  const inputs = ["nombre","correo","correo2","telefono","ciudad"]
+    .map(id=>document.getElementById(id));
+
+  inputs.forEach(i=>i.addEventListener("input",()=>{
+    const [n,c,c2,t,ci] = inputs.map(x=>x.value.trim());
+    btn.disabled = !(n && c && c2 && t && ci && c===c2);
+    btn.classList.toggle("disabled", btn.disabled);
+  }));
+
+  btn.onclick = async ()=>{
+    const doc = await addDoc(collection(db,"compras"),{
+      nombre: nombre.value.trim(),
+      correo: correo.value.trim(),
+      telefono: telefono.value.trim(),
+      ciudad: ciudad.value.trim(),
+      numeros,
+      total,
+      estado:"reservado",
+      fecha: serverTimestamp()
+    });
+
+    document.getElementById("refPago").innerText = doc.id;
+    document.getElementById("paso1").style.display="none";
+    document.getElementById("paso2").style.display="block";
+
+    localStorage.removeItem("numerosSeleccionados");
+  };
 }
-
-const total = numeros.length * 5000;
-
-document.getElementById("resumen").innerHTML = `
-  <b>🎟 Tus números</b>
-  <div class="numeros-box">
-    ${numeros.map(n=>`<span class="numero">${n}</span>`).join("")}
-  </div>
-  <div class="total">💰 Total: $${total.toLocaleString()}</div>
-`;
-
-const btn = document.getElementById("btnContinuar");
-const inputs = ["nombre","correo","correo2","telefono","ciudad"]
-  .map(id=>document.getElementById(id));
-
-inputs.forEach(i=>i.addEventListener("input",()=>{
-  const [n,c,c2,t,ci] = inputs.map(x=>x.value.trim());
-  btn.disabled = !(n && c && c2 && t && ci && c===c2);
-  btn.classList.toggle("disabled", btn.disabled);
-}));
-
-btn.onclick = async ()=>{
-  const doc = await addDoc(collection(db,"compras"),{
-    nombre: nombre.value.trim(),
-    correo: correo.value.trim(),
-    telefono: telefono.value.trim(),
-    ciudad: ciudad.value.trim(),
-    numeros,
-    total,
-    estado:"reservado",
-    fecha: serverTimestamp()
-  });
-
-  document.getElementById("refPago").innerText = doc.id;
-  document.getElementById("paso1").style.display="none";
-  document.getElementById("paso2").style.display="block";
-
-  localStorage.removeItem("numeros");
-  localStorage.removeItem("cantidadSeleccionada");
-};
 
 window.toggleMetodo = function(id){
   document.querySelectorAll(".metodo-info").forEach(m=>{
@@ -262,9 +225,7 @@ window.toggleMetodo = function(id){
   <div class="footer-content">
     <p>🎟️ <b>Rifa privada</b></p>
     <p>
-      🔒 Los números se reservan temporalmente y se asignan por orden de confirmación del pago.<br>
-      ⏳ La validación del pago es <b>manual</b>.<br>
-      📧 La confirmación se envía por <b>correo electrónico y WhatsApp</b>.
+      🔒 Los números se reservan por orden de confirmación del pago.
     </p>
     <p class="footer-copy">
       © 2026 · Todos los derechos reservados
