@@ -89,7 +89,6 @@ button{
   text-align:center;
 }
 
-/* MÉTODOS */
 .metodo-btn{
   background:#f1f1f1;
   padding:14px;
@@ -113,7 +112,6 @@ button{
   padding:22px 15px;
   border-top:4px solid #4CAF50;
 }
-
 .footer-content{
   max-width:420px;
   margin:auto;
@@ -121,11 +119,9 @@ button{
   font-size:13.5px;
   line-height:1.6;
 }
-
 .footer-content p{
   margin:6px 0;
 }
-
 .footer-copy{
   margin-top:12px;
   font-size:12px;
@@ -141,7 +137,6 @@ button{
 
   <div class="resumen" id="resumen"></div>
 
-  <!-- PASO 1 -->
   <div id="paso1">
     <input id="nombre" placeholder="Nombre completo">
     <input id="correo" type="email" placeholder="Correo electrónico">
@@ -154,7 +149,6 @@ button{
     </button>
   </div>
 
-  <!-- PASO 2 -->
   <div id="paso2" style="display:none">
 
     <div class="alerta">
@@ -198,9 +192,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🔥 LÓGICA SEGURA */
+/* 🔥 LÓGICA CORREGIDA */
 let numeros = JSON.parse(localStorage.getItem("numeros"));
-let cantidad = Number(localStorage.setItem("cantidadSeleccionda",  cantidad); ) || 0;
+let cantidad = Number(localStorage.getItem("cantidadSeleccionada")) || 0;
 
 if(!numeros || numeros.length === 0){
   if(cantidad > 0){
@@ -253,10 +247,8 @@ btn.onclick = async ()=>{
   document.getElementById("paso1").style.display="none";
   document.getElementById("paso2").style.display="block";
 
-  /* 🔥 LIMPIAR DATOS */
   localStorage.removeItem("numeros");
-  localStorage.removeItem("cantidad");
-  localStorage.removeItem("total");
+  localStorage.removeItem("cantidadSeleccionada");
 };
 
 window.toggleMetodo = function(id){
@@ -279,5 +271,6 @@ window.toggleMetodo = function(id){
     </p>
   </div>
 </footer>
+
 </body>
 </html>
