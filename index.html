@@ -346,7 +346,8 @@ async function actualizarBarra(){
 
   snapshot.forEach(doc=>{
     const data = doc.data();
-    if(data.numeros){
+
+    if(data.estado === "pagado" && data.numeros){
       totalVendidos += data.numeros.length;
     }
   });
