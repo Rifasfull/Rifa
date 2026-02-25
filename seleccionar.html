@@ -71,7 +71,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebas
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+  apiKey: "TU_API_KEY",
   authDomain: "rifa-2026-1a341.firebaseapp.com",
   projectId: "rifa-2026-1a341"
 };
@@ -81,7 +81,11 @@ const db = getFirestore(app);
 
 const TOTAL = 10000;
 const PRECIO = 5000;
-const cantidad = Number(localStorage.getItem("cantidadSeleccionada")) || 0;
+const cantidad = Number(localStorage.getItem("cantidad")) || 0;
+
+/* 🔥 LIMPIAR DATOS VIEJOS */
+localStorage.removeItem("numeros");
+localStorage.removeItem("total");
 
 const lista = document.getElementById("lista");
 const req = document.getElementById("req");
@@ -97,6 +101,7 @@ let bloqueados = [];
 let disponibles = [];
 
 function cargarNumeros(){
+
   onSnapshot(collection(db,"compras"), (snapshot)=>{
 
     bloqueados = [];
@@ -118,7 +123,12 @@ function cargarNumeros(){
     }
 
     render(disponibles);
+
+  }, (error)=>{
+    console.error("Error Firestore:", error);
+    loader.innerText = "Error cargando números";
   });
+
 }
 
 function render(arr){
@@ -134,7 +144,6 @@ function render(arr){
 }
 
 function toggle(n,el){
-  if(el.classList.contains("blocked")) return;
 
   if(el.classList.contains("selected")){
     el.classList.remove("selected");
@@ -144,11 +153,13 @@ function toggle(n,el){
     el.classList.add("selected");
     seleccionados.push(n);
   }
+
   actualizar();
 }
 
 function actualizar(){
   sel.innerText=seleccionados.length;
+
   if(seleccionados.length===cantidad){
     btn.disabled=false;
     btn.className="primary";
@@ -159,11 +170,14 @@ function actualizar(){
 }
 
 window.completarAzar=function(){
+
   const faltan = cantidad - seleccionados.length;
   if(faltan<=0) return;
 
   const pool = disponibles.filter(n=>!seleccionados.includes(n));
+
   for(let i=0;i<faltan;i++){
+    if(pool.length===0) break;
     const r = pool.splice(Math.floor(Math.random()*pool.length),1)[0];
     seleccionados.push(r);
   }
@@ -173,6 +187,7 @@ window.completarAzar=function(){
       d.classList.add("selected");
     }
   });
+
   actualizar();
 }
 
@@ -184,6 +199,8 @@ buscador.oninput=function(){
 
 window.irCheckout=function(){
   localStorage.setItem("numeros",JSON.stringify(seleccionados));
+  localStorage.setItem("cantidad",seleccionados.length);
+  localStorage.setItem("total",seleccionados.length*PRECIO);
   location.href="checkout.html";
 }
 
