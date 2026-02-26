@@ -271,7 +271,6 @@ input{
   </div>
 </footer>
 
-<!-- FUNCIONES -->
 <script>
 function elegir(cantidad){
   localStorage.setItem("cantidadSeleccionada", cantidad);
@@ -292,10 +291,6 @@ function cerrarModal(){
   document.getElementById("modalOpciones").style.display = "none";
 }
 
-function azar(){
-  window.location.href = "checkout.html";
-}
-
 function seleccionar(){
   window.location.href = "seleccionar.html";
 }
@@ -305,10 +300,9 @@ function buscarPorCorreo(){
 }
 </script>
 
-<!-- FIREBASE SOLO PARA BARRA -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
@@ -318,6 +312,55 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+window.azar = async function(){
+
+  const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
+  if(!cantidad || cantidad < 1){
+    alert("Debes elegir un paquete primero");
+    return;
+  }
+
+  const snapshot = await getDocs(collection(db,"compras"));
+
+  let bloqueados = [];
+
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    if((data.estado === "reservado" || data.estado === "pagado") 
+       && Array.isArray(data.numeros)){
+      bloqueados.push(...data.numeros);
+    }
+  });
+
+  const TOTAL = 10000;
+  let disponibles = [];
+
+  for(let i=0;i<TOTAL;i++){
+    const n = i.toString().padStart(4,"0");
+    if(!bloqueados.includes(n)){
+      disponibles.push(n);
+    }
+  }
+
+  if(disponibles.length < cantidad){
+    alert("No hay suficientes números disponibles");
+    return;
+  }
+
+  let seleccionados = [];
+
+  for(let i=0;i<cantidad;i++){
+    const r = disponibles.splice(Math.floor(Math.random()*disponibles.length),1)[0];
+    seleccionados.push(r);
+  }
+
+  localStorage.setItem("numeros", JSON.stringify(seleccionados));
+  localStorage.setItem("cantidad", seleccionados.length);
+  localStorage.setItem("total", seleccionados.length * 5000);
+
+  window.location.href = "checkout.html";
+};
 
 onSnapshot(collection(db,"compras"), (snapshot)=>{
   let totalVendidos = 0;
