@@ -318,23 +318,25 @@ document.getElementById("btnAzar").addEventListener("click", azar);
 
 window.azar = async function(){
 
-  const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
-  if(!cantidad || cantidad < 1){
-    alert("Debes elegir un paquete primero");
-    return;
+  alert("Entró a azar");
+
+  try {
+
+    const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
+
+    alert("Cantidad: " + cantidad);
+
+    const snapshot = await getDocs(collection(db,"compras"));
+
+    alert("Firestore respondió");
+
+  } catch (error) {
+
+    alert("Error: " + error.message);
+
   }
 
-  const snapshot = await getDocs(collection(db,"compras"));
-
-  let bloqueados = [];
-
-  snapshot.forEach(doc=>{
-    const data = doc.data();
-    if((data.estado === "reservado" || data.estado === "pagado") 
-       && Array.isArray(data.numeros)){
-      bloqueados.push(...data.numeros);
-    }
-  });
+};
 
   const TOTAL = 10000;
   let disponibles = [];
