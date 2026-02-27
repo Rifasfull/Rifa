@@ -245,7 +245,7 @@ input{
   <div class="modal-box">
     <div class="cerrar-modal" onclick="cerrarModal()">✕</div>
     <h2>🎯 ¿Cómo quieres tus números?</h2>
-    <button class="secondary" onclick="azar()">🎲 Al azar</button>
+    <button class="secondary" id="btnAzar">🎲 Al azar</button>
     <button onclick="seleccionar()">✋ Seleccionar</button>
   </div>
 </div>
@@ -313,7 +313,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.azar = async function(){
+document.getElementById("btnAzar").addEventListener("click", azar);
+
+async function azar(){
 
   const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
   if(!cantidad || cantidad < 1){
@@ -356,11 +358,9 @@ window.azar = async function(){
   }
 
   localStorage.setItem("numeros", JSON.stringify(seleccionados));
-  localStorage.setItem("cantidad", seleccionados.length);
-  localStorage.setItem("total", seleccionados.length * 5000);
 
   window.location.href = "checkout.html";
-};
+}
 
 onSnapshot(collection(db,"compras"), (snapshot)=>{
   let totalVendidos = 0;
