@@ -6,298 +6,86 @@
 <title>🎟️ Super Rifa de una Xtz 150 y una eco deluxe 0k</title>
 
 <style>
-body{
-  font-family:Arial,sans-serif;
-  background:#f2f2f2;
-  margin:0;
-  padding:15px
-}
-
+body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:15px}
 h1,h2{text-align:center}
-
-.hero,.card,.progress-container{
-  background:#fff;
-  padding:16px;
-  border-radius:14px;
-  margin-bottom:16px;
-  box-shadow:0 6px 18px rgba(0,0,0,.08)
-}
-
-.hero img{
-  width:100%;
-  border-radius:12px;
-  margin-bottom:10px
-}
-
-.progress-bar{
-  width:100%;
-  height:22px;
-  background:#e5e7eb;
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:10px;
-}
-
-.progress-fill{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#16a34a,#22c55e);
-  transition:width .6s ease;
-}
-
-.progress-text{
-  margin-top:8px;
-  font-weight:bold;
-  font-size:14px;
-}
-
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background:#16a34a;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-  transition:.3s;
-}
-
-button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 15px rgba(0,0,0,.15);
-}
-
+.hero,.card,.progress-container{background:#fff;padding:16px;border-radius:14px;margin-bottom:16px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.hero img{width:100%;border-radius:12px;margin-bottom:10px}
+.progress-bar{width:100%;height:22px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin-top:10px}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#16a34a,#22c55e);transition:width .6s ease}
+.progress-text{margin-top:8px;font-weight:bold;font-size:14px}
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;background:#16a34a;color:white;font-size:16px;cursor:pointer;transition:.3s}
+button:hover{transform:translateY(-2px);box-shadow:0 6px 15px rgba(0,0,0,.15)}
 button.secondary{background:#2563eb}
-
-input{
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  font-size:15px
-}
-
-.packages{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:16px;
-}
-
-.packages button{
-  position:relative;
-  background:linear-gradient(145deg,#ffffff,#f9fafb);
-  border:1px solid #e5e7eb;
-  border-radius:18px;
-  padding:20px 12px;
-  color:#111827;
-  box-shadow:0 8px 20px rgba(0,0,0,.07);
-}
-
-.packages button:hover{
-  border:1px solid #16a34a;
-}
-
-.packages .cantidad{
-  font-size:24px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
-.packages .precio{
-  font-size:15px;
-  font-weight:700;
-  color:#16a34a;
-}
-
-.badge{
-  position:absolute;
-  top:-8px;
-  right:-8px;
-  background:#ef4444;
-  color:#fff;
-  font-size:11px;
-  padding:6px 10px;
-  border-radius:20px;
-  font-weight:bold;
-  box-shadow:0 4px 10px rgba(0,0,0,.2);
-}
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-
-.modal-box{
-  background:#fff;
-  width:90%;
-  max-width:360px;
-  padding:26px 22px 22px;
-  border-radius:14px;
-  text-align:center;
-  position:relative;
-}
-
-.cerrar-modal{
-  position:absolute;
-  top:10px;
-  right:10px;
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  background:#f3f4f6;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  font-weight:bold;
-  color:#111;
-  cursor:pointer;
-}
-
-.footer{
-  background:#1f2933;
-  color:#e5e7eb;
-  margin-top:30px;
-  padding:22px 15px;
-  border-top:4px solid #16a34a;
-}
-
-.footer-content{
-  max-width:420px;
-  margin:auto;
-  text-align:center;
-  font-size:13.5px;
-  line-height:1.6;
-}
-
-.footer-copy{
-  margin-top:12px;
-  font-size:12px;
-  color:#9ca3af;
-}
+input{width:100%;padding:10px;margin-top:6px;font-size:15px}
+.packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.packages button{position:relative;background:linear-gradient(145deg,#ffffff,#f9fafb);border:1px solid #e5e7eb;border-radius:18px;padding:20px 12px;color:#111827;box-shadow:0 8px 20px rgba(0,0,0,.07)}
+.packages button:hover{border:1px solid #16a34a}
+.packages .cantidad{font-size:24px;font-weight:800;margin-bottom:6px}
+.packages .precio{font-size:15px;font-weight:700;color:#16a34a}
+.badge{position:absolute;top:-8px;right:-8px;background:#ef4444;color:#fff;font-size:11px;padding:6px 10px;border-radius:20px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:999}
+.modal-box{background:#fff;width:90%;max-width:360px;padding:26px 22px 22px;border-radius:14px;text-align:center;position:relative}
+.cerrar-modal{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;color:#111;cursor:pointer}
+.footer{background:#1f2933;color:#e5e7eb;margin-top:30px;padding:22px 15px;border-top:4px solid #16a34a}
+.footer-content{max-width:420px;margin:auto;text-align:center;font-size:13.5px;line-height:1.6}
+.footer-copy{margin-top:12px;font-size:12px;color:#9ca3af}
 </style>
 </head>
 
 <body>
 
 <div class="hero">
-  <img id="slide" src="img/Foto1.jpg" alt="Rifa">
-  <h1>🎟️ GRAN RIFA OFICIAL</h1>
-  <p>· Valor por número b $5.000</p>
+<img src="img/Foto1.jpg" alt="Rifa">
+<h1>🎟️ GRAN RIFA OFICIAL</h1>
+<p>· Valor por número $5.000</p>
 </div>
 
 <div class="progress-container">
-  <h2>📊 Progreso de la rifa</h2>
-  <div class="progress-bar">
-    <div class="progress-fill" id="progressFill"></div>
-  </div>
-  <div class="progress-text" id="progressText">
-     (0%)
-  </div>
+<h2>📊 Progreso de la rifa</h2>
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+<div class="progress-text" id="progressText">(0%)</div>
 </div>
 
-<div class="card">
-  <h2>📦 Paquetes Premium</h2>
-</div>
+<div class="card"><h2>📦 Paquetes Premium</h2></div>
 
 <div class="packages">
-  <button onclick="elegir(15)">
-    <div class="cantidad">15 boletos</div>
-    <div class="precio">$75.000</div>
-  </button>
-
-  <button onclick="elegir(30)">
-    <div class="badge">MÁS VENDIDO</div>
-    <div class="cantidad">30 boletos</div>
-    <div class="precio">$150.000</div>
-  </button>
-
-  <button onclick="elegir(50)">
-    <div class="cantidad">50 boletos</div>
-    <div class="precio">$250.000</div>
-  </button>
-
-  <button onclick="elegir(100)">
-    <div class="cantidad">100 boletos</div>
-    <div class="precio">$500.000</div>
-  </button>
-
-  <button onclick="elegir(200)">
-    <div class="badge">🔥 MEJOR VALOR</div>
-    <div class="cantidad">200 boletos</div>
-    <div class="precio">$1.000.000</div>
-  </button>
+<button onclick="elegir(15)"><div class="cantidad">15 boletos</div><div class="precio">$75.000</div></button>
+<button onclick="elegir(30)"><div class="badge">MÁS VENDIDO</div><div class="cantidad">30 boletos</div><div class="precio">$150.000</div></button>
+<button onclick="elegir(50)"><div class="cantidad">50 boletos</div><div class="precio">$250.000</div></button>
+<button onclick="elegir(100)"><div class="cantidad">100 boletos</div><div class="precio">$500.000</div></button>
+<button onclick="elegir(200)"><div class="badge">🔥 MEJOR VALOR</div><div class="cantidad">200 boletos</div><div class="precio">$1.000.000</div></button>
 </div>
 
 <div class="card">
-  <h2>✏️ Personalizado</h2>
-  <input type="number" id="cantidad" min="15" placeholder="Mínimo 15 números">
-  <button onclick="personalizado()">Continuar</button>
+<h2>✏️ Personalizado</h2>
+<input type="number" id="cantidad" min="15" placeholder="Mínimo 15 números">
+<button onclick="personalizado()">Continuar</button>
 </div>
 
 <div class="modal" id="modalOpciones">
-  <div class="modal-box">
-    <div class="cerrar-modal" onclick="cerrarModal()">✕</div>
-    <h2>🎯 ¿Cómo quieres tus números?</h2>
-    <button class="secondary" onclick="azar()">🎲 Al azar</button>
-    <button onclick="seleccionar()">✋ Seleccionar</button>
-  </div>
+<div class="modal-box">
+<div class="cerrar-modal" onclick="cerrarModal()">✕</div>
+<h2>🎯 ¿Cómo quieres tus números?</h2>
+<button class="secondary" onclick="azar()">🎲 Al azar</button>
+<button onclick="seleccionar()">✋ Seleccionar</button>
 </div>
-
-<div class="card">
-  <h2>🔎 Buscar mis números</h2>
-  <input type="email" id="correoBuscar" placeholder="Ingresa tu correo">
-  <button class="secondary" onclick="buscarPorCorreo()">Buscar</button>
-  <div id="resultado"></div>
 </div>
-
-<footer class="footer">
-  <div class="footer-content">
-    <p>🎟️ <b>Rifa privada</b></p>
-    <p>
-      🔒 Los números se reservan temporalmente y se asignan por orden de confirmación del pago.<br>
-      ⏳ La validación del pago es <b>manual</b>.<br>
-      📧 La confirmación se envía por <b>correo electrónico y WhatsApp</b>.
-    </p>
-    <p class="footer-copy">
-      © 2026 · Todos los derechos reservados
-    </p>
-  </div>
-</footer>
 
 <script>
 function elegir(cantidad){
-  localStorage.setItem("cantidadSeleccionada", cantidad);
-  document.getElementById("modalOpciones").style.display = "flex";
+localStorage.setItem("cantidadSeleccionada", cantidad);
+document.getElementById("modalOpciones").style.display = "flex";
 }
-
 function personalizado(){
-  const cantidad = document.getElementById("cantidad").value;
-  if(!cantidad || cantidad < 15){
-    alert("Mínimo 15 números");
-    return;
-  }
-  localStorage.setItem("cantidadSeleccionada", cantidad);
-  document.getElementById("modalOpciones").style.display = "flex";
+const cantidad = document.getElementById("cantidad").value;
+if(!cantidad || cantidad < 15){alert("Mínimo 15 números");return;}
+localStorage.setItem("cantidadSeleccionada", cantidad);
+document.getElementById("modalOpciones").style.display = "flex";
 }
-
-function cerrarModal(){
-  document.getElementById("modalOpciones").style.display = "none";
-}
-
-function seleccionar(){
-  window.location.href = "seleccionar.html";
-}
-
-function buscarPorCorreo(){
-  alert("Buscador conectado correctamente");
-}
+function cerrarModal(){document.getElementById("modalOpciones").style.display = "none";}
+function seleccionar(){window.location.href = "seleccionar.html";}
 </script>
 
 <script type="module">
@@ -305,82 +93,66 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebas
 import { getFirestore, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
-  authDomain: "rifa-2026-1a341.firebaseapp.com",
-  projectId: "rifa-2026-1a341"
+apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+authDomain: "rifa-2026-1a341.firebaseapp.com",
+projectId: "rifa-2026-1a341"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-alert("Firebase cargó");
-
-document.getElementById("btnAzar").addEventListener("click", azar);
 
 window.azar = async function(){
 
-  alert("Entró a azar");
+const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
+if(!cantidad){alert("No hay cantidad seleccionada");return;}
 
-  try {
+const snapshot = await getDocs(collection(db,"compras"));
 
-    const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
+let bloqueados = [];
+snapshot.forEach(doc=>{
+const data = doc.data();
+if(Array.isArray(data.numeros)){
+bloqueados = bloqueados.concat(data.numeros);
+}
+});
 
-    alert("Cantidad: " + cantidad);
+const TOTAL = 10000;
+let disponibles = [];
 
-    const snapshot = await getDocs(collection(db,"compras"));
-
-    alert("Firestore respondió");
-
-  } catch (error) {
-
-    alert("Error: " + error.message);
-
-  }
-
-};
-
-  const TOTAL = 10000;
-  let disponibles = [];
-
-  for(let i=0;i<TOTAL;i++){
-    const n = i.toString().padStart(4,"0");
-    if(!bloqueados.includes(n)){
-      disponibles.push(n);
-    }
-  }
-
-  if(disponibles.length < cantidad){
-    alert("No hay suficientes números disponibles");
-    return;
-  }
-
-  let seleccionados = [];
-
-  for(let i=0;i<cantidad;i++){
-    const r = disponibles.splice(Math.floor(Math.random()*disponibles.length),1)[0];
-    seleccionados.push(r);
-  }
-
-  localStorage.setItem("numeros", JSON.stringify(seleccionados));
-
-  window.location.href = "checkout.html";
+for(let i=0;i<TOTAL;i++){
+const n = i.toString().padStart(4,"0");
+if(!bloqueados.includes(n)){
+disponibles.push(n);
+}
 }
 
+if(disponibles.length < cantidad){
+alert("No hay suficientes números disponibles");
+return;
+}
+
+let seleccionados = [];
+for(let i=0;i<cantidad;i++){
+const r = disponibles.splice(Math.floor(Math.random()*disponibles.length),1)[0];
+seleccionados.push(r);
+}
+
+localStorage.setItem("numeros", JSON.stringify(seleccionados));
+window.location.href = "checkout.html";
+};
+
 onSnapshot(collection(db,"compras"), (snapshot)=>{
-  let totalVendidos = 0;
-
-  snapshot.forEach(doc=>{
-    const data = doc.data();
-    if(data.estado === "pagado" && Array.isArray(data.numeros)){
-      totalVendidos += data.numeros.length;
-    }
-  });
-
-  const totalGeneral = 10000;
-  const porcentaje = (totalVendidos / totalGeneral) * 100;
-
-  document.getElementById("progressFill").style.width = porcentaje + "%";
-  document.getElementById("progressText").innerText =
-    porcentaje.toFixed(1) + "% vendido";
+let totalVendidos = 0;
+snapshot.forEach(doc=>{
+const data = doc.data();
+if(data.estado === "pagado" && Array.isArray(data.numeros)){
+totalVendidos += data.numeros.length;
+}
+});
+const porcentaje = (totalVendidos / 10000) * 100;
+document.getElementById("progressFill").style.width = porcentaje + "%";
+document.getElementById("progressText").innerText =
+porcentaje.toFixed(1) + "% vendido";
 });
 </script>
 
