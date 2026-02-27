@@ -315,7 +315,7 @@ const db = getFirestore(app);
 
 document.getElementById("btnAzar").addEventListener("click", azar);
 
-async function azar(){
+window.azar = async function(){
 
   const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
   if(!cantidad || cantidad < 1){
