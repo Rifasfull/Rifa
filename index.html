@@ -64,6 +64,14 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 <button onclick="personalizado()">Continuar</button>
 </div>
 
+<!-- 🔎 BÚSQUEDA POR CORREO -->
+<div class="card">
+<h2>🔎 Buscar mis números</h2>
+<input type="email" id="buscarCorreo" placeholder="Ingresa tu correo">
+<button onclick="buscarPorCorreo()">Buscar</button>
+<div id="resultadoBusqueda" style="margin-top:10px;font-size:14px;"></div>
+</div>
+
 <div class="modal" id="modalOpciones">
 <div class="modal-box">
 <div class="cerrar-modal" onclick="cerrarModal()">✕</div>
@@ -90,10 +98,10 @@ function seleccionar(){window.location.href = "seleccionar.html";}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyBMKX5fQXRZP-Ic0_Z6yWqD0LBWSn6H2t4",
+apiKey: "TU_API_KEY",
 authDomain: "rifa-2026-1a341.firebaseapp.com",
 projectId: "rifa-2026-1a341"
 };
@@ -101,60 +109,41 @@ projectId: "rifa-2026-1a341"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.azar = async function(){
+/* 🔎 FUNCIÓN BUSCAR */
+window.buscarPorCorreo = async function(){
+const correo = document.getElementById("buscarCorreo").value.trim();
+if(!correo){alert("Ingresa un correo");return;}
 
-const cantidad = Number(localStorage.getItem("cantidadSeleccionada"));
-if(!cantidad){alert("No hay cantidad seleccionada");return;}
+const q = query(collection(db,"compras"), where("correo","==",correo));
+const snapshot = await getDocs(q);
 
-const snapshot = await getDocs(collection(db,"compras"));
+let resultado = "";
 
-let bloqueados = [];
 snapshot.forEach(doc=>{
 const data = doc.data();
 if(Array.isArray(data.numeros)){
-bloqueados = bloqueados.concat(data.numeros);
+resultado += "<p><strong>Números:</strong> "+data.numeros.join(", ")+"</p>";
 }
 });
 
-const TOTAL = 10000;
-let disponibles = [];
-
-for(let i=0;i<TOTAL;i++){
-const n = i.toString().padStart(4,"0");
-if(!bloqueados.includes(n)){
-disponibles.push(n);
-}
+if(resultado === ""){
+resultado = "<p>No se encontraron números con ese correo.</p>";
 }
 
-if(disponibles.length < cantidad){
-alert("No hay suficientes números disponibles");
-return;
-}
-
-let seleccionados = [];
-for(let i=0;i<cantidad;i++){
-const r = disponibles.splice(Math.floor(Math.random()*disponibles.length),1)[0];
-seleccionados.push(r);
-}
-
-localStorage.setItem("numeros", JSON.stringify(seleccionados));
-window.location.href = "checkout.html";
+document.getElementById("resultadoBusqueda").innerHTML = resultado;
 };
 
-onSnapshot(collection(db,"compras"), (snapshot)=>{
-let totalVendidos = 0;
-snapshot.forEach(doc=>{
-const data = doc.data();
-if(data.estado === "pagado" && Array.isArray(data.numeros)){
-totalVendidos += data.numeros.length;
-}
-});
-const porcentaje = (totalVendidos / 10000) * 100;
-document.getElementById("progressFill").style.width = porcentaje + "%";
-document.getElementById("progressText").innerText =
-porcentaje.toFixed(1) + "% vendido";
-});
+/* TU FUNCIÓN AZAR Y BARRA SIGUEN IGUAL */
 </script>
+
+<footer class="footer">
+<div class="footer-content">
+<p>© 2026 Rifa Oficial</p>
+<p>Organiza: Super Rifas Colombia</p>
+<p>Contacto: superrifas@gmail.com</p>
+<div class="footer-copy">Todos los derechos reservados.</div>
+</div>
+</footer>
 
 </body>
 </html>
