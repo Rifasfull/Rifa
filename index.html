@@ -35,9 +35,21 @@ input{width:100%;padding:10px;margin-top:6px;font-size:15px}
 <body>
 
 <div class="hero">
-<img src="img/Foto1.jpg" alt="Rifa">
+
+<!-- Imagen principal -->
+<img id="imagenPrincipal" src="img/foto1.jpg" alt="Premio principal">
+
+<!-- Miniaturas -->
+<div style="display:flex;gap:10px;margin-top:10px;justify-content:center;flex-wrap:wrap;">
+  <img src="img/foto1.jpg" onclick="cambiarImagen(this)" style="width:70px;border-radius:8px;cursor:pointer;">
+  <img src="img/foto2.jpg" onclick="cambiarImagen(this)" style="width:70px;border-radius:8px;cursor:pointer;">
+  <img src="img/foto3.jpg" onclick="cambiarImagen(this)" style="width:70px;border-radius:8px;cursor:pointer;">
+  <img src="img/foto4.jpg" onclick="cambiarImagen(this)" style="width:70px;border-radius:8px;cursor:pointer;">
+</div>
+
 <h1>🎟️ GRAN RIFA OFICIAL</h1>
 <p>· Valor por número $5.000</p>
+
 </div>
 
 <div class="progress-container">
@@ -94,6 +106,9 @@ document.getElementById("modalOpciones").style.display = "flex";
 }
 function cerrarModal(){document.getElementById("modalOpciones").style.display = "none";}
 function seleccionar(){window.location.href = "seleccionar.html";}
+function cambiarImagen(elemento){
+document.getElementById("imagenPrincipal").src = elemento.src;
+}
 </script>
 
 <script type="module">
