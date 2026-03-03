@@ -111,9 +111,12 @@ projectId: "rifa-2026-1a341"
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const TOTAL_NUMEROS = 10000; // 🔥 CAMBIA este número por el total real de tu rifa
+const TOTAL_NUMEROS = 10000; // 🔥 AJUSTA al total real de tu rifa
 
-const comprasRef = collection(db, "compras");
+const comprasRef = query(
+  collection(db, "compras"),
+  where("estado", "==", "confirmada")
+);
 
 onSnapshot(comprasRef, (snapshot) => {
   let vendidos = 0;
@@ -128,8 +131,7 @@ onSnapshot(comprasRef, (snapshot) => {
   const porcentaje = Math.round((vendidos / TOTAL_NUMEROS) * 100);
 
   document.getElementById("progressFill").style.width = porcentaje + "%";
-  document.getElementById("progressText").innerText =
-    vendidos + " vendidos de " + TOTAL_NUMEROS + " (" + porcentaje + "%)";
+  document.getElementById("progressText").innerText = porcentaje + "%";
 });
 
 window.buscarPorCorreo = async function(){
