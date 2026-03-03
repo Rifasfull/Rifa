@@ -108,12 +108,15 @@ function cargarNumeros(){
     disponibles = [];
 
     snapshot.forEach(d=>{
-      const data = d.data();
-      if(
-  data.estado !== "cancelado" &&
-  Array.isArray(data.numeros)
-){
-    });
+  const data = d.data();
+
+  if(
+    data.estado !== "cancelado" &&
+    Array.isArray(data.numeros)
+  ){
+    bloqueados.push(...data.numeros);
+  }
+});
 
     for(let i=0;i<TOTAL;i++){
       const n = i.toString().padStart(4,"0");
