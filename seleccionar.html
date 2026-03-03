@@ -109,10 +109,10 @@ function cargarNumeros(){
 
     snapshot.forEach(d=>{
       const data = d.data();
-      if((data.estado === "reservado" || data.estado === "pagado") 
-         && Array.isArray(data.numeros)){
-        bloqueados.push(...data.numeros);
-      }
+      if(
+  data.estado !== "cancelado" &&
+  Array.isArray(data.numeros)
+){
     });
 
     for(let i=0;i<TOTAL;i++){
