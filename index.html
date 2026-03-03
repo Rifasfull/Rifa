@@ -115,7 +115,7 @@ const TOTAL_NUMEROS = 10000; // 🔥 AJUSTA al total real de tu rifa
 
 const comprasRef = query(
   collection(db, "compras"),
-  where("estado", "==", "confirmada")
+  where("estado", "==", "confirmado")
 );
 
 onSnapshot(comprasRef, (snapshot) => {
