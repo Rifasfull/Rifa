@@ -144,6 +144,15 @@ button{
   color:#9ca3af;
 }
 </style>
+
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){
+emailjs.init("mHYIXLUNeQA533cTX");
+})();
+</script>
+
 </head>
 
 <body>
@@ -262,6 +271,18 @@ if(numeros.length === 0){
     });
 
     document.getElementById("refPago").innerText = doc.id;
+
+    // ENVÍO AUTOMÁTICO DEL CORREO
+    emailjs.send("service_ahjtb5r","template_1m5ls84",{
+      name: nombre.value.trim(),
+      email: correo.value.trim(),
+      telefono: telefono.value.trim(),
+      ciudad: ciudad.value.trim(),
+      numeros: numeros.join(", "),
+      total: total,
+      referencia: doc.id
+    });
+
     document.getElementById("paso1").style.display="none";
     document.getElementById("paso2").style.display="block";
     localStorage.removeItem("numeros");
