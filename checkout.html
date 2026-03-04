@@ -115,6 +115,15 @@ button{
   margin-top:8px;
   font-size:14px;
 }
+.copy-btn{
+  padding:6px 10px;
+  font-size:12px;
+  margin-left:8px;
+  border:none;
+  border-radius:6px;
+  background:#e5e7eb;
+  cursor:pointer;
+}
 .footer{
   background:#1f2933;
   color:#e5e7eb;
@@ -167,12 +176,37 @@ button{
       ⚠️ El botón no realiza el pago automático.
     </div>
 
+    <!-- NEQUI -->
     <div class="metodo-btn" onclick="toggleMetodo('nequi')">🟣 Nequi</div>
     <div id="nequi" class="metodo-info">
-      Número: <b>3113959486</b><br>
-      Nombre: <b>Miguel Moreno</b><br>
+      Número: <b id="nequiNumero">3113959486</b>
+      <button class="copy-btn" onclick="copiarTexto('nequiNumero', this)">📋 Copiar</button><br><br>
+      Nombre: <b>Miguel Moreno</b><br><br>
       Referencia: <b id="refPago"></b>
+      <button class="copy-btn" onclick="copiarTexto('refPago', this)">📋 Copiar</button>
     </div>
+
+    <!-- DAVIPLATA -->
+    <div class="metodo-btn" onclick="toggleMetodo('daviplata')">🔵 Daviplata</div>
+    <div id="daviplata" class="metodo-info">
+      Número: <b id="daviNumero">NUMERO_DAVIPLATA_AQUI</b>
+      <button class="copy-btn" onclick="copiarTexto('daviNumero', this)">📋 Copiar</button><br><br>
+      Nombre: <b>TU_NOMBRE_AQUI</b><br><br>
+      Referencia: <b id="refPago"></b>
+      <button class="copy-btn" onclick="copiarTexto('refPago', this)">📋 Copiar</button>
+    </div>
+
+    <!-- TRANSFERENCIA NU -->
+    <div class="metodo-btn" onclick="toggleMetodo('nu')">🏦 Transferencia bancaria (Llave Nu)</div>
+    <div id="nu" class="metodo-info">
+      Banco: <b>Nu Bank</b><br><br>
+      Llave: <b id="nuLlave">LLAVE_NU_AQUI</b>
+      <button class="copy-btn" onclick="copiarTexto('nuLlave', this)">📋 Copiar</button><br><br>
+      Nombre: <b>TU_NOMBRE_AQUI</b><br><br>
+      Referencia: <b id="refPago"></b>
+      <button class="copy-btn" onclick="copiarTexto('refPago', this)">📋 Copiar</button>
+    </div>
+
   </div>
 </div>
 
@@ -238,6 +272,17 @@ window.toggleMetodo = function(id){
   document.querySelectorAll(".metodo-info").forEach(m=>{
     m.style.display = m.id===id && m.style.display!=="block" ? "block" : "none";
   });
+}
+
+window.copiarTexto = function(id, boton){
+  const texto = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(texto);
+
+  const original = boton.innerText;
+  boton.innerText = "Copiado ✅";
+  setTimeout(()=>{
+    boton.innerText = original;
+  },2000);
 }
 </script>
 
