@@ -192,9 +192,7 @@ const db = getFirestore(app);
 let numeros = JSON.parse(localStorage.getItem("numeros")) || [];
 
 if(numeros.length === 0){
-  document.getElementById("resumen").innerHTML = `
-    <b>No hay números seleccionados.</b>
-  `;
+  document.getElementById("resumen").innerHTML = `<b>No hay números seleccionados.</b>`;
 }else{
 
   const total = numeros.length * 5000;
@@ -208,12 +206,12 @@ if(numeros.length === 0){
   `;
 
   const btn = document.getElementById("btnContinuar");
-  const inputs = ["nombre","correo","correo2","telefono","ciudad"]
+  const inputs = ["nombre","correo","telefono","ciudad"]
     .map(id=>document.getElementById(id));
 
   inputs.forEach(i=>i.addEventListener("input",()=>{
-    const [n,c,c2,t,ci] = inputs.map(x=>x.value.trim());
-    btn.disabled = !(n && c && c2 && t && ci && c===c2);
+    const [n,c,t,ci] = inputs.map(x=>x.value.trim());
+    btn.disabled = !(n && c && t && ci);
     btn.classList.toggle("disabled", btn.disabled);
   }));
 
