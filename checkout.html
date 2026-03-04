@@ -81,6 +81,20 @@ button{
   margin-bottom:15px;
   text-align:center;
 }
+.pago-manual{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:18px;
+  font-size:14px;
+  line-height:1.6;
+}
+.pago-manual strong{
+  display:block;
+  margin-bottom:6px;
+  font-size:15px;
+}
 .metodo-btn{
   background:#f1f1f1;
   padding:14px;
@@ -88,6 +102,10 @@ button{
   margin-top:10px;
   font-weight:bold;
   cursor:pointer;
+  transition:.2s;
+}
+.metodo-btn:hover{
+  background:#e5e7eb;
 }
 .metodo-info{
   display:none;
@@ -128,7 +146,6 @@ button{
   <div id="paso1">
     <input id="nombre" placeholder="Nombre completo">
     <input id="correo" type="email" placeholder="Correo electrónico">
-    <input id="correo2" type="email" placeholder="Confirmar correo electrónico">
     <input id="telefono" placeholder="Teléfono (WhatsApp)">
     <input id="ciudad" placeholder="Ciudad">
     <button id="btnContinuar" class="continuar disabled" disabled>
@@ -139,14 +156,17 @@ button{
   <div id="paso2" style="display:none">
     <div class="alerta">
       🔒 <b>Tus números han sido reservados</b>.<br><br>
-      Realiza la transferencia y recibirás confirmación
-      <b>por correo electrónico y WhatsApp</b>.
+      Recibirás confirmación <b>por correo electrónico y WhatsApp</b>
+      una vez validado el pago.
     </div>
-<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:14px;border-radius:12px;margin-bottom:15px;font-size:14px;line-height:1.5">
-<strong>💳 Pago manual</strong><br><br>
-Selecciona el medio de pago y realiza la transferencia manualmente con los datos que aparecen en pantalla.<br>
-El botón no realiza el pago automático.
-</div>
+
+    <div class="pago-manual">
+      <strong>💳 Instrucciones de pago</strong>
+      Selecciona el medio de pago y realiza la transferencia manualmente
+      utilizando los datos que aparecen abajo.<br><br>
+      ⚠️ El botón no realiza el pago automático.
+    </div>
+
     <div class="metodo-btn" onclick="toggleMetodo('nequi')">🟣 Nequi</div>
     <div id="nequi" class="metodo-info">
       Número: <b>3113959486</b><br>
@@ -169,7 +189,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🔥 CORREGIDO: leer "numeros" */
 let numeros = JSON.parse(localStorage.getItem("numeros")) || [];
 
 if(numeros.length === 0){
@@ -213,8 +232,6 @@ if(numeros.length === 0){
     document.getElementById("refPago").innerText = doc.id;
     document.getElementById("paso1").style.display="none";
     document.getElementById("paso2").style.display="block";
-
-    /* 🔥 CORREGIDO: limpiar "numeros" */
     localStorage.removeItem("numeros");
   };
 }
