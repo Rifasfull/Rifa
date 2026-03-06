@@ -275,15 +275,19 @@ if(numeros.length === 0){
 document.getElementById("refPago3").innerText = doc.id;
 
     // ENVÍO AUTOMÁTICO DEL CORREO
-    emailjs.send("service_z4l0ktg","template_1m5ls84",{
-      name: nombre.value.trim(),
-      email: correo.value.trim(),
-      telefono: telefono.value.trim(),
-      ciudad: ciudad.value.trim(),
-      numeros: numeros.join(", "),
-      total: total,
-      referencia: doc.id
-    });
+ emailjs.send("service_z4l0ktg","template_1m5ls84",{
+  name: nombre.value.trim(),
+  email: correo.value.trim(),
+  telefono: telefono.value.trim(),
+  ciudad: ciudad.value.trim(),
+  numeros: numeros.join(", "),
+  total: total,
+  referencia: doc.id
+}).then(function(){
+  console.log("Correo enviado");
+}).catch(function(error){
+  console.log("Error correo:", error);
+});
 
     document.getElementById("paso1").style.display="none";
     document.getElementById("paso2").style.display="block";
