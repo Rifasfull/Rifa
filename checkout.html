@@ -202,7 +202,7 @@ emailjs.init("mHYIXLUNeQA533cTX");
       <button class="copy-btn" onclick="copiarTexto('daviNumero', this)">📋 Copiar</button><br><br>
       Nombre: <b>Gloria Stella Jimenez</b><br><br>
       Referencia: <b id="refPago"></b>
-      <button class="copy-btn" onclick="copiarTexto('refPago', this)">📋 Copiar</button>
+      <button class="copy-btn" onclick="copiarTexto('refPago2', this)">📋 Copiar</button>
     </div>
 
     <!-- TRANSFERENCIA NU -->
@@ -213,7 +213,7 @@ emailjs.init("mHYIXLUNeQA533cTX");
       <button class="copy-btn" onclick="copiarTexto('nuLlave', this)">📋 Copiar</button><br><br>
       Nombre: <b>Miguel Angel Moreno</b><br><br>
       Referencia: <b id="refPago"></b>
-      <button class="copy-btn" onclick="copiarTexto('refPago', this)">📋 Copiar</button>
+      <button class="copy-btn" onclick="copiarTexto('refPago3', this)">📋 Copiar</button>
     </div>
 
   </div>
@@ -271,6 +271,8 @@ if(numeros.length === 0){
     });
 
     document.getElementById("refPago").innerText = doc.id;
+    document.getElementById("refPago2").innerText = doc.id;
+document.getElementById("refPago3").innerText = doc.id;
 
     // ENVÍO AUTOMÁTICO DEL CORREO
     emailjs.send("service_z4l0ktg","template_1m5ls84",{
