@@ -173,7 +173,7 @@ Durante el transcurso de la rifa se estarán entregando los demás premios.
 
 <div class="card">
 <h2>✏️ Personalizado</h2>
-<input type="number" id="cantidad" min="15" placeholder="Mínimo 15 números">
+<input type="number" id="cantidad" min="10" placeholder="Mínimo 10 números">
 <button onclick="personalizado()">Continuar</button>
 </div>
 
@@ -192,8 +192,8 @@ window.location.href = "seleccionar.html";
 
 function personalizado(){
 const cantidad = document.getElementById("cantidad").value;
-if(!cantidad || cantidad < 15){
-alert("Mínimo 15 números");
+if(!cantidad || cantidad < 10){
+alert("Mínimo 10 números");
 return;
 }
 localStorage.setItem("cantidadSeleccionada", cantidad);
