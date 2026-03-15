@@ -58,6 +58,16 @@ button{
 
 <h2>📋 Panel de administración</h2>
 
+<div style="margin-bottom:15px;text-align:center;">
+  <input type="number" id="buscarNumero" placeholder="Buscar número" 
+  style="padding:10px;border-radius:8px;border:1px solid #ccc;width:150px">
+
+  <button onclick="buscarNumero()" 
+  style="padding:10px;border-radius:8px;background:#2196F3;color:white;border:none;">
+  Buscar
+  </button>
+</div>
+
 <div class="tabs">
   <button class="tab active" onclick="cambiarTab('reservado')">⏳ Pendientes</button>
   <button class="tab" onclick="cambiarTab('confirmado')">✅ Confirmados</button>
@@ -140,6 +150,37 @@ window.confirmar = async function(id){
 window.cancelar = async function(id){
   if(!confirm("¿Cancelar y mover al historial?")) return;
   await updateDoc(doc(db,"compras",id),{estado:"cancelado"});
+};
+window.buscarNumero = function(){
+
+  const numero = document.getElementById("buscarNumero").value;
+
+  const resultado = compras.find(c => 
+    c.numeros.includes(numero)
+  );
+
+  if(!numero){
+    alert("Escribe un número");
+    return;
+  }
+
+  if(resultado){
+
+    const estado = resultado.estado.toUpperCase();
+
+    alert(
+      "Número encontrado\n\n" +
+      "Nombre: " + resultado.nombre +
+      "\nTeléfono: " + resultado.telefono +
+      "\nEstado: " + estado
+    );
+
+  } else {
+
+    alert("❌ Ese número no ha sido comprado");
+
+  }
+
 };
 </script>
 
